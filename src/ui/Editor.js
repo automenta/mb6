@@ -1,7 +1,7 @@
-import { createInput } from './utils.js';
+import {createInput} from './UIUtil.js';
 
 export default class Editor {
-    constructor({ object, onUpdate, onInsertSemantic, onSign, pluginManager }) {
+    constructor({object, onUpdate, onInsertSemantic, onSign, pluginManager}) {
         this.object = object;
         this.onUpdate = onUpdate;
         this.onInsertSemantic = onInsertSemantic;
@@ -35,7 +35,7 @@ export default class Editor {
         const propInput = createInput('text', value, newValue => {
             this.object.setProperty(key, newValue);
             this.updateObject();
-            this.pluginManager?.emit('propertyChanged', { object: this.object, key, value: newValue });
+            this.pluginManager?.emit('propertyChanged', {object: this.object, key, value: newValue});
         });
         propLabel.appendChild(propInput);
         return propLabel;
@@ -78,7 +78,7 @@ export default class Editor {
         insertMenu.addEventListener('change', () => {
             if (insertMenu.value) {
                 this.onInsertSemantic?.(this.object, insertMenu.value);
-                this.pluginManager?.emit('semanticInserted', { object: this.object, type: insertMenu.value });
+                this.pluginManager?.emit('semanticInserted', {object: this.object, type: insertMenu.value});
                 insertMenu.value = '';
             }
         });

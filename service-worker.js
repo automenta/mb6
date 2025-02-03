@@ -1,5 +1,5 @@
 const CACHE_NAME = 'cre-cache-v1';
-const urlsToCache = ['/', '/index.html', '/src/styles.css', '/src/main.js', '/manifest.json'];
+const urlsToCache = ['/', '/index.html', '/src/styles.css', '/src/App.js', '/manifest.json'];
 
 self.addEventListener('install', event =>
     event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)))

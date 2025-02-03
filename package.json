@@ -7,15 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server.js",
+    "start": "node src/server/Server.js",
     "test": "vitest",
     "test:core": "vitest run --dir src/core",
-    "test:server": "vitest run --dir server",
+    "test:server": "vitest run --dir src/server",
     "test:ui": "vitest run --dir src/ui --environment jsdom"
   },
   "dependencies": {
     "@libp2p/bootstrap": "latest",
-    "@chainsafe/libp2p-yamux": "latest",  
+    "@chainsafe/libp2p-yamux": "latest",
     "@libp2p/noise": "latest",
     "@libp2p/peer-id-factory": "latest",
     "@libp2p/tcp": "latest",

@@ -1,6 +1,5 @@
 import {nanoid} from 'nanoid';
 import NObject from './obj.js';
-import {PluginManager} from './plugins/PluginManager.js';
 
 /**
  * Factory class for creating NObject instances.
@@ -9,7 +8,7 @@ class NObjectFactory {
     /**
      * Creates a new NObject instance.
      * @param {Map} objects - The Map instance to store objects.
-     * @param {PluginManager} pluginManager - The PluginManager instance.
+     * @param {UIPlugins} pluginManager - The ServerPlugins instance.
      * @param {object} initialProperties - Optional initial properties for the NObject.
      * @returns {NObject} - The created NObject instance.
      */

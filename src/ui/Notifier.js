@@ -33,8 +33,7 @@ class Notifier {
 
 
     on(event, listener) {
-        this.listeners[event] = this.listeners[event] || [];
-        this.listeners[event].push(listener);
+        (this.listeners[event] = this.listeners[event] || []).push(listener);
     }
 
     emit(event, ...args) {
@@ -44,4 +43,4 @@ class Notifier {
     }
 }
 
-export { Notifier }; // Export the class
+export {Notifier}; // Export the class

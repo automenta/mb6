@@ -1,23 +1,23 @@
-import { MainView, NObjectRenderer, NotificationRenderer } from './ui/MainView.js';
-import Sidebar from './ui/Sidebar.js';
-import Editor from './ui/Editor.js';
-import NObjectFactory from './NObjectFactory.js';
-import { Notifier } from './messaging/Notifier.js';
-import { PluginManager } from './plugins/PluginManager.js';
-import NObject from './obj.js';
+import './css/styles.css';
+import {MainView, NotificationRenderer} from './MainView.js';
+import Sidebar from './Sidebar.js';
+import Editor from './Editor.js';
+import NObjectFactory from '../core/NObjectFactory.js';
+import {Notifier} from './Notifier.js';
+import {UIPlugins} from './UIPlugins.js';
+import NObject from '../core/obj.js';
 
 
-const pluginManager = new PluginManager();
-const notifier = new Notifier(); // Create Notifier instance
+const pluginManager = new UIPlugins();
+const notifier = new Notifier();
 
-const objects = new Map(); // Initialize objects map
-const notifications = []; // Initialize notifications array
+const objects = new Map();
+const notifications = [];
 
 const mainView = new MainView();
 
 const renderObjects = () => {
-    const objArray = Array.from(objects.values());
-    mainView.renderNObjects(objArray);
+    mainView.renderNObjects(Array.from(objects.values()));
 };
 
 const renderEditor = obj => {
@@ -26,7 +26,7 @@ const renderEditor = obj => {
         onUpdate: updated => {
             const obj = objects.get(updated.id);
             if (obj) {
-                const updatedProperties = { ...obj.properties, ...updated.indefiniteProperties, ...updated.definiteProperties };
+                const updatedProperties = {...obj.properties, ...updated.indefiniteProperties, ...updated.definiteProperties};
                 const updatedObj = new NObject(obj.id, obj.name, obj.content, updatedProperties, obj.tags);
                 objects.set(updated.id, updatedObj);
                 pluginManager.emit('objectUpdated', updatedObj);
@@ -36,7 +36,7 @@ const renderEditor = obj => {
             const token = `[${type.toUpperCase()}]`;
             obj.content = `${obj.content ?? ''} ${token}`;
             objects.set(obj.id, obj);
-            pluginManager.emit('semanticInserted', { object: obj, type });
+            pluginManager.emit('semanticInserted', {object: obj, type});
             renderEditor(obj);
         },
         onSign: obj => {
@@ -52,20 +52,18 @@ const renderEditor = obj => {
     pluginManager.emit('editorOpened', obj);
 };
 
-const nObjectRenderer = new NObjectRenderer({ onCreate: () => NObjectFactory.create(objects, pluginManager), onEdit: renderEditor });
 const notificationRenderer = new NotificationRenderer();
 
-mainView.setNObjectRendererHandlers({ onCreate: () => NObjectFactory.create(objects, pluginManager), onEdit: renderEditor });
-
+mainView.setNObjectRendererHandlers({
+    onCreate: () => NObjectFactory.create(objects, pluginManager),
+    onEdit: renderEditor
+});
 
 const sidebar = new Sidebar({
     onNavigate: (route) => {
         window.location.hash = route; // Use hash-based navigation
     }
 });
-
-document.getElementById('app').append(sidebar.el, mainView.el, notificationRenderer.el);
-
 
 const routes = {
     '#notifications': () => mainView.renderNotifications(notifications),
@@ -74,19 +72,16 @@ const routes = {
 };
 
 function routeHandler(route) {
-    const routeFn = routes[route] ?? routes[''];
-    if (routeFn) {
-        routeFn();
-    }
+    (routes[route] ?? routes[''])?.();
 }
+
+notifier.on('notify', message => { // Use notifier instance
+    notifications.push({message, timestamp: Date.now()});
+    if (location.hash === '#notifications')
+        mainView.renderNotifications(notifications);
+});
 
 window.addEventListener('hashchange', () => routeHandler(location.hash));
 routeHandler(location.hash);
 
-
-notifier.on('notify', message => { // Use notifier instance
-    notifications.push({ message, timestamp: Date.now() });
-    if (location.hash === '#notifications') {
-        mainView.renderNotifications(notifications);
-    }
-});
+document.getElementById('app').append(sidebar.el, mainView.el, notificationRenderer.el);

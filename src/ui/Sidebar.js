@@ -1,10 +1,7 @@
 export default class Sidebar {
-    constructor({ onNavigate }) {
+    constructor({onNavigate}) {
         this.onNavigate = onNavigate;
-        this.el = this.createSidebar();
-    }
 
-    createSidebar() {
         const el = document.createElement('div');
         el.id = 'sidebar';
         el.innerHTML = `
@@ -18,10 +15,10 @@ export default class Sidebar {
             </ul>
         `;
         el.appendChild(this.createDarkModeToggle());
-        el.addEventListener('click', ({ target }) =>
+        el.addEventListener('click', ({target}) =>
             target.tagName === 'A' && target.dataset.navigo !== undefined && this.onNavigate?.(target.getAttribute('href'))
         );
-        return el;
+        this.el = el;
     }
 
     createDarkModeToggle() {

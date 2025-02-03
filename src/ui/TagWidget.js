@@ -10,7 +10,6 @@ export const insertTagWidget = () => {
     const value = prompt('Enter tag value:');
     if (!value) return; // Return early if user cancels prompt
 
-
     const span = document.createElement('span');
     span.className = 'tag-widget';
     span.dataset.type = type;

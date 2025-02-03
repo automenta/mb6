@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import {nanoid} from 'nanoid';
 
 /**
  * Represents a shared object in the Collaborative Reality Editor.
@@ -11,6 +11,7 @@ class NObject {
     content;
     properties;
     tags;
+
     constructor(id, name, content, properties = {}, tags = []) {
         this.id = id;
         this.name = name;
@@ -18,21 +19,23 @@ class NObject {
         this.properties = properties;
         this.tags = tags;
     }
+
     get indefiniteProperties() {
         return Object.fromEntries(Object.entries(this.properties).filter(([, value]) => this.isIndefinite(value)));
     }
+
     get definiteProperties() {
         return Object.fromEntries(Object.entries(this.properties).filter(([, value]) => !this.isIndefinite(value)));
     }
+
     /**
      * Adds a tag to the NObject.
      * @param {string} tag - The semantic tag to add.
      */
     addTag(tag) {
         this.tags.push(tag);
-        // TODO: Implement tag validation and hypersliced semantics
-// TODO: Implement hypersliced tag semantics (README.md lines 31-33)
     }
+
     /**
      * Checks if a value is indefinite.
      * @param {*} value - The value to check.
@@ -41,13 +44,14 @@ class NObject {
     isIndefinite(value) {
         return typeof value === 'object' && value !== null && value.__indefinite === true;
     }
+
     /**
      * Merges this NObject with another NObject.
      * @param {NObject} other - The NObject to merge with.
      * @returns {NObject} - A new NObject representing the merged data.
      */
     merge(other) {
-        const mergedProperties = { ...this.properties, ...other.properties };
+        const mergedProperties = {...this.properties, ...other.properties};
         const mergedTags = [...this.tags, ...other.tags];
         let mergedContent = this.content;
         if (this.getContentType() === other.getContentType()) {
@@ -57,7 +61,7 @@ class NObject {
 ${other.content}`;
                     break;
                 case 'json':
-                    mergedContent = { ...this.content, ...other.content };
+                    mergedContent = {...this.content, ...other.content};
                     break;
                 // Add more content type specific merging logic here as needed
             }

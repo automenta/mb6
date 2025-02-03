@@ -4,39 +4,56 @@
 // TODO: Implement persistent queries using NObjects and indefinite properties (README.md lines 20-22)
 // TODO: Implement LibP2P for bootstrapping (README.md line 89)
 // TODO: Implement end-to-end encryption for private data (README.md lines 47)
-import { WebsocketProvider } from 'y-websocket';
+import {WebsocketProvider} from 'y-websocket';
 // TODO: Implement crypto-signing for NObject integrity and provenance (README.md lines 48)
 // TODO: Implement semantic matching between NObjects based on indefinite and definite properties (README.md lines 23-27)
-import { nanoid } from 'nanoid';
+import {nanoid} from 'nanoid';
+
 // TODO: Implement notifications for matches to shared NObjects (README.md lines 34-36)
-import * as wrtc from 'wrtc'; // Assuming WebRTC library
 
-class NetworkService {
-    // ... (Existing code remains unchanged)
+class Net {
+    constructor(doc) {
+        this.initP2PNetwork();
+        this.initSupernodeConnection();
+        this.setupPluginSystem();
 
-    initP2PNetwork() {
-        // Initialize WebRTC peer connection
-        const peerConnection = new wrtc.RTCPeerConnection();
-        
-        // TODO: Implement signaling logic using a signaling server or other mechanism.
-        // This will allow peers to discover each other and exchange connection information.
-        peerConnection.onicecandidate = event => {
-            if (event.candidate) {
-                // Send ICE candidate to the remote peer via signaling server
-                console.log('Sending ICE candidate:', event.candidate);
-            }
-        };
+        this.provider = new WebsocketProvider(
+            `ws://${import.meta.env.VITE_WEBSOCKET_HOST ?? 'localhost'}:${import.meta.env.VITE_WEBSOCKET_PORT ?? 3001}`,
+            'nobject-editor',
+            doc
+        );
+        this.awareness = this.provider.awareness;
+        this.initAwareness();
+    }
 
-        // TODO: Implement offer/answer exchange for connection establishment.
-        // One peer creates an offer and sends it to the other, which then creates an answer.
+    initAwareness = () => {
+        this.awareness.setLocalStateField('user', {
+            name: `User-${nanoid(4)}`,
+            color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+        });
+        this.awareness.on('change', () => console.log('Awareness update:', this.awareness.getStates()));
+    }
 
-        // TODO: Implement UDP Gossip Protocol for peer discovery and maintenance.
-        // This involves periodically broadcasting and receiving peer information within the network.
+    initP2PNetwork = () => {
+        // TODO: Implement WebRTC signaling and connection establishment for P2P.
+        // - Use a signaling server (e.g., WebSocket) to exchange SDP offers/answers and ICE candidates.
+        // - Handle peer connection lifecycle: connection, disconnection, and reconnection.
+        console.log('WebRTC P2P implementation pending.');
 
-        // TODO: Integrate BitTorrent DHT and/or LibP2P for bootstrapping.
-        // This helps peers initially join the network and discover other peers.
+        // TODO: Implement WebRTC for direct peer-to-peer communication
+        // TODO: Implement UDP Gossip Protocol for network discovery.
+        // - Periodically broadcast and listen for UDP messages to discover peers in local network.
+        // - Implement logic to maintain a list of active peers.
+        console.log('UDP Gossip Protocol implementation pending.');
 
-        console.log('P2P Network Partially Implemented (WebRTC setup)');
+        // TODO: Implement UDP Gossip Protocol for network discovery
+        // TODO: Implement BitTorrent DHT and/or LibP2P for bootstrapping.
+        // - Use DHT to discover initial peers and join the P2P network.
+        // - Explore LibP2P for a more comprehensive P2P framework if needed.
+        console.log('DHT/LibP2P bootstrapping pending.');
+
+        // TODO: Implement BitTorrent DHT and/or LibP2P for bootstrapping
+        console.log('P2P Network Initialized (Not fully implemented)');
     }
 
     initSupernodeConnection() {
@@ -85,4 +102,4 @@ class NetworkService {
     }
 }
 
-export default new NetworkService();
+export default new Net();

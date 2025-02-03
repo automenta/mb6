@@ -5,12 +5,12 @@
  *   - init, postInit, objectCreated, editorOpened,
  *   - objectUpdated, semanticInserted, objectSigned, onMessage, etc.
  */
-export class PluginManager {
+export class UIPlugins {
     constructor() {
         this.plugins = [];
     }
 
-    register(plugin) {
+    add(plugin) {
         this.plugins.push(plugin);
         console.log(`[Client Plugin Manager] Registered plugin: ${plugin.name ?? 'Unnamed plugin'}`);
         plugin.init?.();

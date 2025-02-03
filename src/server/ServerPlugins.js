@@ -5,7 +5,7 @@
  *   - init, onPeerDiscovery, onPeerConnect, onPeerDisconnect,
  *   - onConnection, onDisconnect, onBeforeUpdate, onAfterUpdate, onMessage, etc.
  */
-export class PluginManager {
+export class ServerPlugins {
     constructor() {
         this.plugins = [];
     }

@@ -1,6 +1,3 @@
-import NObjectFactory from '../NObjectFactory';
-import { createInput } from './utils';
-
 class BaseRenderer {
     constructor(elId) {
         this.el = document.getElementById(elId) || document.createElement('div');
@@ -27,7 +24,7 @@ class BaseRenderer {
 
 
 class NObjectRenderer extends BaseRenderer {
-    constructor({ onCreate, onEdit }) {
+    constructor({onCreate, onEdit}) {
         super('nobjects-view');
         this.onCreate = onCreate;
         this.onEdit = onEdit;
@@ -41,7 +38,7 @@ class NObjectRenderer extends BaseRenderer {
         const list = document.createElement('ul');
         list.id = 'nobjects-list';
         objects.forEach(obj => {
-            const li = Object.assign(document.createElement('li'), { textContent: obj.name });
+            const li = Object.assign(document.createElement('li'), {textContent: obj.name});
             li.addEventListener('click', () => this.onEdit(obj));
             list.appendChild(li);
         });
@@ -99,6 +96,7 @@ class MainView {
         this.notificationRenderer.render(notifications);
     }
 
+    /** TODO create DBView.js */
     renderDatabase(items) {
         this.clearMainViewContent();
 
@@ -116,8 +114,6 @@ class MainView {
         }
 
         this.el.appendChild(this.dbView);
-
-
     }
 
     clearMainViewContent() {
@@ -126,11 +122,11 @@ class MainView {
         this.el.append(this.nObjectRenderer.el, this.notificationRenderer.el, this.dbView);
     }
 
-    setNObjectRendererHandlers({ onCreate, onEdit }) {
+    setNObjectRendererHandlers({onCreate, onEdit}) {
         this.nObjectRenderer.onCreate = onCreate;
         this.nObjectRenderer.onEdit = onEdit;
     }
 }
 
 
-export { MainView, NObjectRenderer, NotificationRenderer };
+export {MainView, NObjectRenderer, NotificationRenderer};
