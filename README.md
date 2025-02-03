@@ -58,10 +58,9 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 -   **Dark Mode**
     -   Supported for visual comfort.
 
-## Architecture
+## Design
 
 ### Data Persistence
-
 -   Client and server persistence are essential, ideally implemented through a common interface.
 -   **Server-side:** LevelDB.
 -   **Client-side:** Yjs's IndexedDB persistence library for offline capabilities.
@@ -85,9 +84,6 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
     -   UDP Gossip Protocol.
     -   BitTorrent DHT (bootstrap).
     -   LibP2P (bootstrap).
--   **Database**
-    -   In-memory caching and persistent storage (LevelDB, IPFS).
-    -   Ensure durability and scalability.
 -   **Server (Supernode)**
     -   Optional Node.js-based supernode enhances functionality.
     -   Provides access to networks like IPFS and BitTorrent.
@@ -100,16 +96,14 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
     -   Plugin system is flexible, with evolving event handling and interfaces.
 
 ### UI
+-   Single-page application built with TypeScript/JavaScript.
+-   Dynamic components for flexibility and reusability.
+-   `yjs` ensures real-time collaborative editing.
+-   jQuery is considered for UI construction and manipulation.
+    -   Promotes code reuse through a well-organized, object-oriented design.
+-   Semantic schemas ("tags") will drive procedural UI generation and management.
 
--   **Implementation**
-    -   Single-page application built with TypeScript/JavaScript.
-    -   Dynamic components for flexibility and reusability.
-    -   `yjs` ensures real-time collaborative editing.
-    -   jQuery is considered for UI construction and manipulation.
-        -   Promotes code reuse through a well-organized, object-oriented design.
-    -   Semantic schemas ("tags") will drive procedural UI generation and management.
-
-## Implementation Details
+## Development
 
 ### Build
 
@@ -124,7 +118,7 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 -   `npm run test:server`: Runs server tests (node environment).
 -   `npm run test:ui`: Runs browser-based UI tests.
 
-## Usage
+### Use
 
 1. **Clone:** `git clone <repository URL>` (replace with actual URL)
 2. **Install:** `npm install`
@@ -136,7 +130,7 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 2. **Start:** `npm start`
 3. **Access:** `http://localhost:3000`
 
-### Code Style
+### Code
 
 -   Clear, complete, clean, compact, efficient, self-documenting ES6+ code.
 -   Comments explain complex logic or design decisions.
