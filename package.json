@@ -1,0 +1,44 @@
+{
+  "name": "collaborative-reality-editor",
+  "private": true,
+  "version": "0.6",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js",
+    "test": "vitest",
+    "test:core": "vitest run --dir src/core",
+    "test:server": "vitest run --dir server",
+    "test:ui": "vitest run --dir src/ui --environment jsdom"
+  },
+  "dependencies": {
+    "@libp2p/bootstrap": "latest",
+    "@libp2p/mplex": "latest",
+    "@libp2p/noise": "latest",
+    "@libp2p/peer-id-factory": "^4.2.4",
+    "@libp2p/tcp": "latest",
+    "@libp2p/webrtc-star": "latest",
+    "@libp2p/websockets": "latest",
+    "express": "latest",
+    "level": "latest",
+    "libp2p": "latest",
+    "nanoid": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
+    "uint8arrays": "latest",
+    "y-indexeddb": "^9.0.11",
+    "y-leveldb": "latest",
+    "y-protocols": "^1.0.5",
+    "y-websocket": "^1.5.0",
+    "yjs": "^13.6.8"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "jsdom": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  }
+}
