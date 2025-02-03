@@ -1,64 +1,49 @@
-import * as Y from 'yjs';
-import {nanoid} from 'nanoid';
-import Notifier from './messaging/Notifier.js';
+import { MainView, NObjectRenderer, NotificationRenderer } from './ui/MainView.js';
 import Sidebar from './ui/Sidebar.js';
-import MainView from './ui/MainView.js';
 import Editor from './ui/Editor.js';
-import {insertTagWidget} from './ui/TagWidget.js';
-import NetworkService from './net/NetworkService.js';
-import DBService from './db/DBService.js';
-import {PluginManager} from './plugins/PluginManager.js';
+import NObjectFactory from './NObjectFactory.js';
+import { Notifier } from './messaging/Notifier.js';
+import { PluginManager } from './plugins/PluginManager.js';
 import NObject from './obj.js';
 
-const doc = new Y.Doc();
-
-const objects = doc.getMap('objects');
-const notifications = doc.getArray('notifications');
-
-new DBService(doc);
-new NetworkService(doc);
-window.insertTagWidget = insertTagWidget;
 
 const pluginManager = new PluginManager();
-window.registerClientPlugin = pluginManager.register.bind(pluginManager);
+const notifier = new Notifier(); // Create Notifier instance
 
-const createNObject = () => {
-    const id = nanoid();
-    const newObj = new NObject(id, `NObject ${id}`, '');
-    newObj.setProperty('initialProperty', 'initialValue'); // Example initial property
-    objects.set(id, newObj);
-    pluginManager.emit('objectCreated', newObj);
-    renderObjects();
+const objects = new Map(); // Initialize objects map
+const notifications = []; // Initialize notifications array
+
+const mainView = new MainView();
+
+const renderObjects = () => {
+    const objArray = Array.from(objects.values());
+    mainView.renderNObjects(objArray);
 };
-
-const renderObjects = () => mainView.renderNObjects([...objects.values()]);
 
 const renderEditor = obj => {
     const editor = new Editor({
         object: obj,
         onUpdate: updated => {
             const obj = objects.get(updated.id);
-            for (const key in updated.indefiniteProperties) {
-                obj.setProperty(key, updated.indefiniteProperties[key]);
+            if (obj) {
+                const updatedProperties = { ...obj.properties, ...updated.indefiniteProperties, ...updated.definiteProperties };
+                const updatedObj = new NObject(obj.id, obj.name, obj.content, updatedProperties, obj.tags);
+                objects.set(updated.id, updatedObj);
+                pluginManager.emit('objectUpdated', updatedObj);
             }
-            for (const key in updated.definiteProperties) {
-                obj.setProperty(key, updated.definiteProperties[key]);
-            }
-            objects.set(updated.id, obj);
-            pluginManager.emit('objectUpdated', obj);
         },
         onInsertSemantic: (obj, type) => {
             const token = `[${type.toUpperCase()}]`;
             obj.content = `${obj.content ?? ''} ${token}`;
             objects.set(obj.id, obj);
-            pluginManager.emit('semanticInserted', {object: obj, type});
+            pluginManager.emit('semanticInserted', { object: obj, type });
             renderEditor(obj);
         },
         onSign: obj => {
             const signature = `sig-${obj.id}`;
             obj.signature = signature;
             objects.set(obj.id, obj);
-            Notifier.notify(`NObject signed: ${signature}`);
+            notifier.notify(`NObject signed: ${signature}`); // Use notifier instance
             pluginManager.emit('objectSigned', obj);
         },
         pluginManager
@@ -67,24 +52,41 @@ const renderEditor = obj => {
     pluginManager.emit('editorOpened', obj);
 };
 
-const sidebar = new Sidebar({onNavigate: routeHandler});
-const mainView = new MainView({onCreate: createNObject, onEdit: renderEditor});
-document.getElementById('app').append(sidebar.el, mainView.el);
+const nObjectRenderer = new NObjectRenderer({ onCreate: () => NObjectFactory.create(objects, pluginManager), onEdit: renderEditor });
+const notificationRenderer = new NotificationRenderer();
+
+mainView.setNObjectRendererHandlers({ onCreate: () => NObjectFactory.create(objects, pluginManager), onEdit: renderEditor });
+
+
+const sidebar = new Sidebar({
+    onNavigate: (route) => {
+        window.location.hash = route; // Use hash-based navigation
+    }
+});
+
+document.getElementById('app').append(sidebar.el, mainView.el, notificationRenderer.el);
+
+
+const routes = {
+    '#notifications': () => mainView.renderNotifications(notifications),
+    '#database': () => mainView.renderDatabase([]), // Pass empty array initially
+    '': renderObjects // Default route
+};
 
 function routeHandler(route) {
-    switch (route) {
-        case '#notifications':
-            mainView.renderNotifications([...notifications.toArray()]);
-            break;
-        case '#database':
-            mainView.renderDatabase();
-            break;
-        default:
-            renderObjects();
-            break;
+    const routeFn = routes[route] ?? routes[''];
+    if (routeFn) {
+        routeFn();
     }
 }
 
 window.addEventListener('hashchange', () => routeHandler(location.hash));
 routeHandler(location.hash);
-pluginManager.emit('postInit', {sidebar, mainView, doc, objects, notifications});
+
+
+notifier.on('notify', message => { // Use notifier instance
+    notifications.push({ message, timestamp: Date.now() });
+    if (location.hash === '#notifications') {
+        mainView.renderNotifications(notifications);
+    }
+});

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@libp2p/bootstrap": "latest",
-    "@libp2p/mplex": "latest",
+    "@chainsafe/libp2p-yamux": "latest",  
     "@libp2p/noise": "latest",
     "@libp2p/peer-id-factory": "latest",
     "@libp2p/tcp": "latest",

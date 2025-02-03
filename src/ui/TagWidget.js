@@ -5,9 +5,12 @@ export const insertTagWidget = () => {
         'Service', 'Location', 'Priority', 'Status', 'Comment', 'Rating', 'Review'
     ];
     const type = prompt(`Enter tag type (options: ${tagTypes.join(', ')})`);
-    if (!type) return;
+    if (!type) return; // Return early if user cancels prompt
+
     const value = prompt('Enter tag value:');
-    if (!value) return;
+    if (!value) return; // Return early if user cancels prompt
+
+
     const span = document.createElement('span');
     span.className = 'tag-widget';
     span.dataset.type = type;
@@ -21,14 +24,13 @@ export const insertTagWidget = () => {
 };
 
 const insertNodeAtCaret = node => {
-    const sel = window.getSelection();
-    if (!sel?.rangeCount) return;
-    const range = sel.getRangeAt(0);
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+    const range = selection.getRangeAt(0);
     range.deleteContents();
     range.insertNode(node);
     range.setStartAfter(node);
     range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
+    selection.removeAllRanges();
+    selection.addRange(range);
 };
-        

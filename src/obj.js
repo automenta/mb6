@@ -1,4 +1,4 @@
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 
 /**
  * Represents a shared object in the Collaborative Reality Editor.
@@ -6,15 +6,24 @@ import {nanoid} from 'nanoid';
  * They can be tagged with semantic types for matching and organization.
  */
 class NObject {
-    constructor(id, name, content) {
+    id;
+    name;
+    content;
+    properties;
+    tags;
+    constructor(id, name, content, properties = {}, tags = []) {
         this.id = id;
         this.name = name;
         this.content = content;
-        this.indefiniteProperties = {}; // Properties defining search criteria/queries
-        this.definiteProperties = {};   // Properties describing actual object characteristics
-        this.tags = []; // Semantic tags for matching and organization
+        this.properties = properties;
+        this.tags = tags;
     }
-
+    get indefiniteProperties() {
+        return Object.fromEntries(Object.entries(this.properties).filter(([, value]) => this.isIndefinite(value)));
+    }
+    get definiteProperties() {
+        return Object.fromEntries(Object.entries(this.properties).filter(([, value]) => !this.isIndefinite(value)));
+    }
     /**
      * Adds a tag to the NObject.
      * @param {string} tag - The semantic tag to add.
@@ -22,46 +31,38 @@ class NObject {
     addTag(tag) {
         this.tags.push(tag);
         // TODO: Implement tag validation and hypersliced semantics
-        // TODO: Implement hypersliced tag semantics for complex queries and matching
-        // TODO: Implement semantic matching logic based on tags and properties
+// TODO: Implement hypersliced tag semantics (README.md lines 31-33)
     }
-
     /**
-     * Sets a property of the NObject.
-     * @param {string} key - The property key.
-     * @param {*} value - The property value.
+     * Checks if a value is indefinite.
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is indefinite, false otherwise.
      */
-    setProperty(key, value) {
-        if (this.indefinite(value)) {
-            this.indefiniteProperties[key] = value;
-            // TODO: Update persistent queries based on changes in indefinite properties
-        } else {
-            this.definiteProperties[key] = value;
-            // TODO: Implement semantic matching logic when definite properties are set
-        }
-        // TODO: Implement property-specific logic (e.g., semantic matching, query updates) based on context
-        // TODO: Implement semantic matching logic based on properties
-        // TODO: Update persistent queries if indefinite properties are modified
+    isIndefinite(value) {
+        return typeof value === 'object' && value !== null && value.__indefinite === true;
     }
-
-    /** is the value indefinite */
-    indefinite(value) {
-        // TODO: Implement logic to determine if a value is indefinite or definite
-        return false;
-    }
-
     /**
      * Merges this NObject with another NObject.
      * @param {NObject} other - The NObject to merge with.
      * @returns {NObject} - A new NObject representing the merged data.
      */
     merge(other) {
-        // TODO: Implement data merging logic, preserving lineage
-        const merged = new NObject(nanoid(), `Merged ${this.name} and ${other.name}`, '');
-        merged.indefiniteProperties = {...this.indefiniteProperties, ...other.indefiniteProperties};
-        merged.definiteProperties = {...this.definiteProperties, ...other.definiteProperties};
-        merged.tags = [...this.tags, ...other.tags];
-        return merged;
+        const mergedProperties = { ...this.properties, ...other.properties };
+        const mergedTags = [...this.tags, ...other.tags];
+        let mergedContent = this.content;
+        if (this.getContentType() === other.getContentType()) {
+            switch (this.getContentType()) {
+                case 'text':
+                    mergedContent = `${this.content}
+${other.content}`;
+                    break;
+                case 'json':
+                    mergedContent = { ...this.content, ...other.content };
+                    break;
+                // Add more content type specific merging logic here as needed
+            }
+        }
+        return new NObject(nanoid(), `Merged ${this.name} and ${other.name}`, mergedContent, mergedProperties, mergedTags);
     }
 }
 

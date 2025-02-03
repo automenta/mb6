@@ -1,6 +1,10 @@
+// TODO: Implement routing architecture with pluggable prioritization and filter heuristics (README.md line 95)
 import express from 'express';
+// TODO: Implement connections to IPFS and BitTorrent (README.md line 92)
 import {createServer} from 'http';
+// TODO: Implement WebSocket connection for UI client and additional functionality (README.md line 97)
 import {Server} from 'socket.io';
+// TODO: Implement plugins for input (screenshots, etc.) and analysis (OCR, etc.) (README.md line 98)
 import * as Y from 'yjs';
 import {LeveldbPersistence} from 'y-leveldb';
 import path from 'path';

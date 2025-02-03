@@ -1,5 +1,5 @@
 export default class Sidebar {
-    constructor({onNavigate}) {
+    constructor({ onNavigate }) {
         this.onNavigate = onNavigate;
         this.el = this.createSidebar();
     }
@@ -8,19 +8,17 @@ export default class Sidebar {
         const el = document.createElement('div');
         el.id = 'sidebar';
         el.innerHTML = `
-                <h2><a href="#" data-navigo>CRE</a></h2>
-                <ul>
+            <h2><a href="#" data-navigo>CRE</a></h2>
+            <ul>
                 <li><a href="#me" data-navigo>Me</a></li>
-                // TODO: Implement dynamic updates for Friends and Network links based on real-time data
-
                 <li><a href="#friends" data-navigo>Friends</a></li>
                 <li><a href="#network" data-navigo>Network</a></li>
                 <li><a href="#notifications" data-navigo>Notifications</a></li>
                 <li><a href="#database" data-navigo>Database</a></li>
-                </ul>
-                `;
+            </ul>
+        `;
         el.appendChild(this.createDarkModeToggle());
-        el.addEventListener('click', ({target}) =>
+        el.addEventListener('click', ({ target }) =>
             target.tagName === 'A' && target.dataset.navigo !== undefined && this.onNavigate?.(target.getAttribute('href'))
         );
         return el;
@@ -35,4 +33,3 @@ export default class Sidebar {
         return btn;
     }
 }
-        
