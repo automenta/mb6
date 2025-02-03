@@ -60,7 +60,7 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 
 ## Design
 
-### Data Persistence
+### Database
 -   Client and server persistence are essential, ideally implemented through a common interface.
 -   **Server-side:** LevelDB.
 -   **Client-side:** Yjs's IndexedDB persistence library for offline capabilities.
