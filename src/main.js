@@ -8,8 +8,10 @@ import {insertTagWidget} from './ui/TagWidget.js';
 import NetworkService from './net/NetworkService.js';
 import DBService from './db/DBService.js';
 import {PluginManager} from './plugins/PluginManager.js';
+import NObject from './obj.js';
 
 const doc = new Y.Doc();
+
 const objects = doc.getMap('objects');
 const notifications = doc.getArray('notifications');
 
@@ -22,7 +24,8 @@ window.registerClientPlugin = pluginManager.register.bind(pluginManager);
 
 const createNObject = () => {
     const id = nanoid();
-    const newObj = {id, name: `NObject ${id}`, content: ''};
+    const newObj = new NObject(id, `NObject ${id}`, '');
+    newObj.setProperty('initialProperty', 'initialValue'); // Example initial property
     objects.set(id, newObj);
     pluginManager.emit('objectCreated', newObj);
     renderObjects();
@@ -34,8 +37,15 @@ const renderEditor = obj => {
     const editor = new Editor({
         object: obj,
         onUpdate: updated => {
-            objects.set(updated.id, updated);
-            pluginManager.emit('objectUpdated', updated);
+            const obj = objects.get(updated.id);
+            for (const key in updated.indefiniteProperties) {
+                obj.setProperty(key, updated.indefiniteProperties[key]);
+            }
+            for (const key in updated.definiteProperties) {
+                obj.setProperty(key, updated.definiteProperties[key]);
+            }
+            objects.set(updated.id, obj);
+            pluginManager.emit('objectUpdated', obj);
         },
         onInsertSemantic: (obj, type) => {
             const token = `[${type.toUpperCase()}]`;
@@ -78,4 +88,3 @@ function routeHandler(route) {
 window.addEventListener('hashchange', () => routeHandler(location.hash));
 routeHandler(location.hash);
 pluginManager.emit('postInit', {sidebar, mainView, doc, objects, notifications});
-        

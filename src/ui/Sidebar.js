@@ -11,6 +11,8 @@ export default class Sidebar {
                 <h2><a href="#" data-navigo>CRE</a></h2>
                 <ul>
                 <li><a href="#me" data-navigo>Me</a></li>
+                // TODO: Implement dynamic updates for Friends and Network links based on real-time data
+
                 <li><a href="#friends" data-navigo>Friends</a></li>
                 <li><a href="#network" data-navigo>Network</a></li>
                 <li><a href="#notifications" data-navigo>Notifications</a></li>

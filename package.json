@@ -17,7 +17,7 @@
     "@libp2p/bootstrap": "latest",
     "@libp2p/mplex": "latest",
     "@libp2p/noise": "latest",
-    "@libp2p/peer-id-factory": "^4.2.4",
+    "@libp2p/peer-id-factory": "latest",
     "@libp2p/tcp": "latest",
     "@libp2p/webrtc-star": "latest",
     "@libp2p/websockets": "latest",
@@ -28,11 +28,11 @@
     "socket.io": "latest",
     "socket.io-client": "latest",
     "uint8arrays": "latest",
-    "y-indexeddb": "^9.0.11",
+    "y-indexeddb": "latest",
     "y-leveldb": "latest",
-    "y-protocols": "^1.0.5",
-    "y-websocket": "^1.5.0",
-    "yjs": "^13.6.8"
+    "y-protocols": "latest",
+    "y-websocket": "latest",
+    "yjs": "latest"
   },
   "devDependencies": {
     "@types/express": "latest",
