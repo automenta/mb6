@@ -26,6 +26,9 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 -   **Tags**
     -   Descriptive, `NObject`-typed tags (suggested by schemas).
     -   Ensure unambiguous and multilingual exchange.
+    -   **Hypersliced:**
+        -   Utilize fine-grained interfaces for multiple-inheritance-like semantics.
+        -   Applied to Tags for describing semantic `NObject` content and enabling matching.
 -   **Notifications**
     -   Receive matches to shared `NObject`s as replies.
     -   Stored for display similar to email or forum threads.
@@ -63,17 +66,18 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 -   **Server-side:** LevelDB.
 -   **Client-side:** Yjs's IndexedDB persistence library for offline capabilities.
 -   Database abstraction layer may enhance backend flexibility.
--   Merged `NObject`s reference their "parents" in metadata.
-    -   For data preservation and future resolution strategies.
+-   **Data Merging:**
+    -   Merge all `NObject` content into a new merged object.
+    -   Merged object references the "parents" in metadata.
+    -   Preserves data and enables eventual further resolution.
 -   Tags (semantic schemas)
     -   Defined in JSON files (potentially as JSON schemas or a subset).
-    -   Suggest data shapes for organization and UI generation, rather than strict validation.
+    -   Suggest data shapes for organization and procedural UI generation
     -   A rich library of 'hypersliced' tags will provide high expressivity.
     -   A subset may manage the UI, minimizing hardcoded logic.
 -   Tags can be used freely (potentially leading to soft conflicts).
-    -   Schema validation is not enforced.
--   Yjs synchronization may be limited to friends/active peers.
-    -   System supports non-CRDT `NObject`s for broader applications.
+-   Real-time Yjs CRDT  synchronized editing to Friends and Peers
+    -   Access non-CRDT `NObject`s: searches, cached results, etc..
 
 ### Network
 
@@ -94,9 +98,6 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
     -   WebSocket connection serves the UI client, providing additional functionality.
     -   Plugins provide support for input (screenshots, etc.) and analysis (OCR, etc.).
     -   Plugin system is flexible, with evolving event handling and interfaces.
--   **Data Merging**
-    -   `NObject` properties are concatenated, even in conflicts.
-    -   (Refer to previous feedback for merging data structures).
 
 ### UI
 
