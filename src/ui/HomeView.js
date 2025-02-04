@@ -1,7 +1,6 @@
 import NotificationView from './NotificationView.js';
 
 
-
 export class HomeView {
     constructor(objects, pluginManager, notifications) {
         this.el = document.createElement('div');
@@ -22,7 +21,6 @@ export class HomeView {
 
         this.notificationView.render(this.notifications);
         this.el.appendChild(this.notificationView.el);
-
 
 
     }

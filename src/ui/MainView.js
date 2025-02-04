@@ -7,14 +7,12 @@ export class MainView {
         this.el.appendChild(this.contentContainer);
     }
 
-    setContentView(view) {
-        this.contentContainer.innerHTML = '';
-        this.currentView = view;
-        view.render();
-        this.contentContainer.appendChild(view.el);
-    }
-
-
+    setContentView(view, obj) {
+            this.contentContainer.innerHTML = '';
+            this.currentView = view;
+            view.render(obj); // Pass the object to the render method
+            this.contentContainer.appendChild(view.el);
+        }
 
 
 }

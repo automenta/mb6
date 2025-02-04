@@ -1,13 +1,13 @@
-import * as Y from 'yjs';
 import DB from '../core/DB.js';
 
 export default class EditorContent {
-    constructor({ ydoc, ytext, object, onUpdate, pluginManager }) {
+    constructor({ydoc, ytext, object, onUpdate, pluginManager, emitter}) {
         this.ydoc = ydoc;
         this.ytext = ytext;
         this.object = object;
         this.onUpdate = onUpdate;
         this.pluginManager = pluginManager;
+        this.emitter = emitter;
 
         this.contentEditor = document.createElement('div');
         this.contentEditor.className = 'content-editor';
@@ -20,7 +20,7 @@ export default class EditorContent {
             this.object.content = this.ytext.toString();
             DB.updateObject(this.object).then(() => {
                 this.onUpdate?.(this.object);
-                this.pluginManager?.emit('objectUpdated', this.object);
+                this.emitter.emit('objectUpdated');
             });
         };
 

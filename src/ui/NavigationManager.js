@@ -12,11 +12,21 @@ export default class NavigationManager {
         };
     }
 
+    getObjectIdFromRoute(route) {
+        const match = route.match(/#editor\/(.*)/);
+        return match ? match[1] : null;
+    }
+
     handleNavigation(route) {
 
         const routeHandler = this.routes[route] || this.routes[''];
 
 
-        routeHandler();
+        if (route.startsWith('#editor')) {
+            const objectId = this.getObjectIdFromRoute(route);
+            this.uiManager.setContentView('editor', objectId ? this.uiManager.getNObject(objectId) : null);
+        } else {
+            routeHandler();
+        }
     }
 }

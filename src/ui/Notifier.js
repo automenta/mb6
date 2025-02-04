@@ -1,4 +1,4 @@
-class Notifier {
+export default class Notifier {
     static instance;
     listeners = {};
 
@@ -41,4 +41,4 @@ class Notifier {
     }
 }
 
-export { Notifier };
+export {Notifier};

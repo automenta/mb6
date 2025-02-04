@@ -1,10 +1,11 @@
 import Editor from './Editor.js';
 
 export default class EditorView {
-    constructor(objects, pluginManager) {
+    constructor(objects, pluginManager, emitter) {
         this.el = document.createElement('div');
         this.objects = objects;
         this.pluginManager = pluginManager;
+        this.emitter = emitter;
         this.editor = null; // Store the editor instance
     }
 
@@ -16,10 +17,11 @@ export default class EditorView {
             return;
         }
 
-        this.editor = Editor.createEditor({ // Create and store the editor instance
+        this.editor = new Editor({ // Create and store the editor instance
             object: obj,
             objects: this.objects,
-            pluginManager: this.pluginManager
+            pluginManager: this.pluginManager,
+            emitter: this.emitter
         });
 
         this.el.appendChild(this.editor.el);

@@ -1,5 +1,6 @@
+
 export default class EditorToolbar {
-    constructor({ onInsertSemantic, onSign, object, pluginManager }) {
+    constructor({onInsertSemantic, onSign, object, pluginManager}) {
         this.onInsertSemantic = onInsertSemantic;
         this.onSign = onSign;
         this.object = object;
@@ -8,6 +9,10 @@ export default class EditorToolbar {
         this.el = document.createElement('div');
         this.el.className = 'editor-toolbar';
         this.buildToolbar();
+    }
+
+    get element() {
+        return this.el;
     }
 
     buildToolbar() {
@@ -35,15 +40,11 @@ export default class EditorToolbar {
         insertTagBtn.textContent = 'Insert Tag';
         insertTagBtn.addEventListener('click', () => window.insertTagWidget?.());
 
-this.el.append(
-    signButton,
-    insertMenu,
-    insertTagBtn,
-);
+        this.el.append(
+            signButton,
+            insertMenu,
+            insertTagBtn,
+        );
 
-    }
-
-    get element() {
-        return this.el;
     }
 }

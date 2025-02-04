@@ -1,92 +1,41 @@
-class Menu {
-    constructor({ onNavigate }) {
-        this.onNavigate = onNavigate;
-        const el = document.createElement('div');
-        el.id = 'menu';
-        el.innerHTML = `
-            <button id="create-nobject">+</button>
-            <button id="settings">Settings</button>
-        `;
-        el.addEventListener('click', ({ target }) => {
-            if (target.id === 'create-nobject') {
-                // Handle create NObject action
-            } else if (target.id === 'settings') {
-                // Handle settings action
-            }
-        });
-        this.el = el;
-    }
-}
+import StatusView from './StatusView.js';
+import { v4 as uuidv4 } from 'uuid';
+import NObject from '../core/NObject.js';
+import Menu from './Menu.js';
+import ViewSwitch from './ViewSwitch.js';
+import NObjectList from './NObjectList.js';
+import NObjectThumbnail from './NObjectThumbnail.js';
 
-class ViewSwitch {
-    constructor({ onNavigate }) {
-        this.onNavigate = onNavigate;
-
-        const el = document.createElement('div');
-        el.id = 'view-switch';
-        el.innerHTML = `
-            <ul>
-                <li><a href="#me" data-navigo>Me</a></li>
-                <li><a href="#friends" data-navigo>Friends</a></li>
-                <li><a href="#network" data-navigo>Network</a></li>
-                <li><a href="#notifications" data-navigo>Notifications</a></li>
-                <li><a href="#database" data-navigo>Database</a></li>
-            </ul>
-        `;
-        el.addEventListener('click', ({ target }) => {
-            if (target.tagName === 'A' && target.dataset.navigo) {
-                this.onNavigate(target.getAttribute('href'));
-            }
-        });
-
-        this.el = el;
-    }
-}
-
-
-class NObjectList {
-    constructor(objects) {
-        this.objects = objects;
-
-        const el = document.createElement('ul');
-        el.id = 'object-list';
-
-        this.el = el;
-    }
-
-    renderList() { }
-}
 
 export default class Sidebar {
-    constructor({ onNavigate, objects, renderList }) {
+    constructor({onNavigate, objects, notifier, uiManager, emitter}) {
         this.objects = objects;
         this.onNavigate = onNavigate;
-        this.renderList = renderList;
-
-        this.menu = new Menu({ onNavigate: this.onNavigate });
-        this.viewSwitch = new ViewSwitch({ onNavigate: this.onNavigate });
-        this.nObjectList = new NObjectList(this.objects);
-
+        this.uiManager = uiManager;
+        this.menu = new Menu({onNavigate: this.onNavigate, objects: this.objects, uiManager: this.uiManager});
+        this.viewSwitch = new ViewSwitch({onNavigate: this.onNavigate});
+        this.nObjectList = new NObjectList(this.objects, emitter);
+        this.statusView = new StatusView(notifier);
         const el = document.createElement('div');
         el.id = 'sidebar';
-
         el.appendChild(this.menu.el);
         el.appendChild(this.viewSwitch.el);
-        el.appendChild(this.nObjectList.el);
-        el.appendChild(this.createDarkModeToggle());
 
+        const customRenderer = (obj) => {
+            const thumbnail = new NObjectThumbnail(obj).el;
+            thumbnail.addEventListener('click', () => {
+                console.log("Navigating to: #editor/" + obj.id);
+                this.onNavigate(`#editor/${obj.id}`);
+            });
+            return thumbnail;
+        };
+
+        this.nObjectList.customRenderer = customRenderer; // Set the custom renderer
+
+
+        el.appendChild(this.nObjectList.el);
+        el.appendChild(this.statusView.el);
         this.el = el;
     }
 
-    renderList() {
-        this.nObjectList.renderList();
-    }
-
-    createDarkModeToggle() {
-        const btn = document.createElement('button');
-        btn.id = 'dark-mode-toggle';
-        btn.textContent = 'Toggle Dark Mode';
-        btn.addEventListener('click', () => document.body.classList.toggle('dark'));
-        return btn;
-    }
 }

@@ -1,61 +1,81 @@
-import NObjectFactory from '../core/NObjectFactory.js';
-import { UIManager } from './UIManager.js';
-import NObject from '../core/NObject.js';
 import * as Y from 'yjs';
 import DB from '../core/DB.js';
-
+import EditorToolbar from './Editor.Toolbar.js';
+import EditorMetadata from './Editor.Metadata.js';
 
 export default class Editor {
-    constructor({ object, pluginManager, objects }) {
+    constructor({ object, pluginManager, objects, emitter }) {
+        this.el = this._createElement(object);
         this.object = object;
-
+        this.ydoc = new Y.Doc();
         this.pluginManager = pluginManager;
         this.objects = objects;
+        this.emitter = emitter;
 
-        this.el = this._createElement(object);
+        this.metadata = new EditorMetadata({ object, pluginManager, objects, onSave: this.saveObject, ydoc: this.ydoc });
+        this.toolbar = new EditorToolbar({});
 
-
-        this.ydoc = new Y.Doc();
         this.ytext = this.ydoc.getText('content');
+        this.savedIndicator = document.createElement('span');
+        this.savedIndicator.textContent = 'Saved';
+
+        this.el.prepend(this.toolbar.el);
+        this.el.prepend(this.metadata.element);
+        this.el.appendChild(this.savedIndicator);
+
+
+
         this.ytext.insert(0, this.object.content ?? '');
+        this.contentEditor.value = this.ytext.toString();
 
-
+console.log('ytext observed', this.ytext);
         this.ytext.observe(() => {
-            this.object.content = this.ytext.toString();
-            DB.updateObject(this.object).then(() => {
 
-                this.pluginManager?.emit('objectUpdated', this.object);
-            });
+            if (this.object.content !== this.ytext.toString()) {
+                this.object.content = this.ytext.toString();
+                this.savedIndicator.textContent = 'Saving...';
+                DB.updateObject(this.object).then(() => {
+                    this.emitter.emit('objectUpdated');
+                    this.savedIndicator.textContent = 'Saved';
+                });
+}
         });
 
+        this.savedIndicator.textContent = 'Saved';
 
         this.contentEditor.addEventListener('input', () => {
-
+            this.ytext.delete(0, this.ytext.length);
             this.ytext.insert(0, this.contentEditor.value);
-
         });
-
-
     }
+
+
+    saveObject = async (object) => {
+        await DB.updateObject(object);
+        this.emitter.emit('objectUpdated');
+    }
+
+    insertSemantic = (object, value) => {
+        // Handle semantic insertion
+        console.log('Insert semantic', object, value);
+    }
+
+    signObject = (object) => {
+
+        // Handle object signing
+        console.log('Sign object', object);
+    }
+
 
     _createElement(nObject) {
         const editorContainer = document.createElement('div');
         editorContainer.classList.add('editor-container');
 
-        this.contentEditor = document.createElement('textarea'); // Assign to this.contentEditor
+        this.contentEditor = document.createElement('textarea');
+        this.contentEditor.id = 'content-editor';
         this.contentEditor.value = nObject.content || '';
-
-        editorContainer.appendChild(this.contentEditor); // Append this.contentEditor
+        editorContainer.appendChild(this.contentEditor);
 
         return editorContainer;
-    }
-
-
-    static createEditor({ object, pluginManager, objects }) {
-        return new Editor({
-            object,
-            pluginManager,
-            objects
-        });
     }
 }

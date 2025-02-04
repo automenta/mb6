@@ -8,7 +8,7 @@ import {Server} from 'socket.io';
 import * as Y from 'yjs';
 import {LeveldbPersistence} from 'y-leveldb';
 import path from 'path';
-import {createNode} from './libp2pNode.js';
+import {createNode} from './Net.LibP2P.js';
 import {ServerPlugins} from './ServerPlugins.js';
 import Level from "level";
 import {createEd25519PeerId, createFromJSON} from "@libp2p/peer-id-factory";

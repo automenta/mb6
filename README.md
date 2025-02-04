@@ -103,9 +103,7 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 - Single-page application built with TypeScript/JavaScript.
 - Dynamic components for flexibility and reusability.
 - `yjs` ensures real-time collaborative editing.
-- jQuery is considered for UI construction and manipulation.
-    - Promotes code reuse through a well-organized, object-oriented design.
-- Semantic schemas ("tags") will drive procedural UI generation and management.
+- Tags, which function as semantic schemas, drive procedural UI generation and control.
 
 ## Development
 

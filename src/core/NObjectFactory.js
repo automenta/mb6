@@ -12,9 +12,9 @@ class NObjectFactory {
      * @param {object} initialProperties - Optional initial properties for the NObject.
      * @returns {NObject} - The created NObject instance.
      */
-    static create(objects, pluginManager, initialProperties = {}) {
+    static create(objects, pluginManager, name, content, properties = {}, tags = []) {
         const id = nanoid();
-        const newObj = new NObject(id, `NObject ${id}`, '', initialProperties);
+        const newObj = new NObject(id, name, content, properties, tags);
         objects.set(id, newObj);
         pluginManager?.emit('objectCreated', newObj);
         return newObj;
