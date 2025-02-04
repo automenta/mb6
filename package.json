@@ -32,7 +32,7 @@
     "y-leveldb": "latest",
     "y-protocols": "latest",
     "y-websocket": "latest",
-    "yjs": "^13.6.23"
+    "yjs": "latest"
   },
   "devDependencies": {
     "@types/express": "latest",

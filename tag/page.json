@@ -1,0 +1,29 @@
+{
+  "title": "Page",
+  "description": "DBView content",
+  "type": "object",
+  "properties": {
+    "pageId": {
+      "type": "string",
+      "description": "Page ID"
+    },
+    "title": {
+      "type": "string",
+      "description": "Page Title"
+    },
+    "text": {
+      "type": "string",
+      "description": "Content (Preview)"
+    },
+    "p": {
+      "type": "boolean",
+      "description": "Public"
+    }
+  },
+  "required": [
+    "pageId",
+    "title",
+    "text",
+    "p"
+  ]
+}

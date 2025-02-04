@@ -1,0 +1,8 @@
+{
+  "created": {
+    "type": "number"
+  },
+  "updated": {
+    "type": "number"
+  }
+}

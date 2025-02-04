@@ -1,0 +1,8 @@
+{
+  "references": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  }
+}
