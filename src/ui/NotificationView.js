@@ -3,23 +3,15 @@ export default class NotificationView {
         this.el = document.createElement('ul');
     }
 
-    render(notifications) {
-        this.el.innerHTML = ''; // Clear previous content
+    render = notifications => {
+        this.el.innerHTML = '';
 
-        if (!notifications || notifications.length === 0) {
-            const emptyMessage = document.createElement('li');
-            emptyMessage.textContent = 'No notifications.';
-            this.el.appendChild(emptyMessage);
+        if (!notifications || !notifications.length) {
+            this.el.appendChild(document.createElement('li')).textContent = 'No notifications.';
             return;
         }
 
+        notifications.forEach(notification => this.el.appendChild(document.createElement('li')).textContent = notification.message);
 
-        notifications
-            .map(notification => {
-                const notificationItem = document.createElement('li');
-                notificationItem.textContent = notification.message;
-                return notificationItem;
-            })
-            .forEach(notificationItem => this.el.appendChild(notificationItem));
-    }
+    };
 }

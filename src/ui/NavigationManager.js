@@ -12,21 +12,19 @@ export default class NavigationManager {
         };
     }
 
-    getObjectIdFromRoute(route) {
-        const match = route.match(/#editor\/(.*)/);
-        return match ? match[1] : null;
-    }
+    getObjectIdFromRoute = route => (route.match(/#editor\/(.*)/) || [])[1];
 
-    handleNavigation(route) {
+    handleNavigation = route => {
         let viewName = this.routes[route] || this.routes[''];
         let obj = null;
 
         if (route.startsWith('#editor/')) {
             viewName = 'editor';
             const objectId = this.getObjectIdFromRoute(route);
-            obj = objectId ? this.uiManager.getNObject(objectId) : null;
+            obj = objectId && this.uiManager.getNObject(objectId);
         }
 
         this.uiManager.setContentView(viewName, obj);
-    }
+
+    };
 }

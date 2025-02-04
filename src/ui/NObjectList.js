@@ -19,28 +19,17 @@ export default class NObjectList {
         });
     }
 
-    async refresh() {
-        this.objects = new Map(
-            (await this.db.getObjects())
-                .filter(this.filter)
-                .sort(this.sort)
-                .map(obj => [obj.id, obj]) // Assuming objects have an ID
-        );
-        this.render(this.customRenderer); // Pass customRenderer to render
-    }
+    refresh = async () => {
+        this.objects = new Map((await this.db.getObjects()).filter(this.filter).sort(this.sort).map(obj => [obj.id, obj]));
+        this.render(this.customRenderer);
+    };
 
-    createThumbnail(obj, customRenderer) {
-        if (customRenderer) {
-            return customRenderer(obj);
-        } else {
-            return new NObjectThumbnail(obj).el;
-        }
-    }
+    createThumbnail = (obj, customRenderer) => customRenderer ? customRenderer(obj) : new NObjectThumbnail(obj).el;
 
 
-    render(customRenderer) {
-        this.el.innerHTML = ''; // Clear previous content
-        Array.from(this.objects.values()).map(obj => this.createThumbnail(obj, customRenderer))
-            .forEach(thumbnail => this.el.appendChild(thumbnail));
-    }
+    render = customRenderer => {
+        this.el.innerHTML = '';
+        Array.from(this.objects.values()).map(obj => this.createThumbnail(obj, customRenderer)).forEach(thumbnail => this.el.appendChild(thumbnail));
+
+    };
 }

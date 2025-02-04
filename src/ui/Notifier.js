@@ -11,34 +11,30 @@ export default class Notifier {
         this.container = document.getElementById('notification-container') ?? this.createContainer();
     }
 
-    createContainer() {
-        const el = document.createElement('div');
-        el.id = 'notification-container';
-        document.body.appendChild(el);
-        return el;
-    }
+    createContainer = () => {
+        const container = document.body.appendChild(document.createElement('div'));
+        container.id = 'notification-container';
+        return container;
+    };
 
-    notify(message) {
-        const notification = Object.assign(document.createElement('div'), {
-            className: 'notification',
-            textContent: message
-        });
-        this.container.appendChild(notification);
+    notify = message => {
+        const notification = this.container.appendChild(document.createElement('div'));
+        notification.className = 'notification';
+        notification.textContent = message;
         setTimeout(() => notification.remove(), 3000);
-
         this.emit('notify', message);
-    }
+
+    };
 
 
-    on(event, listener) {
-        (this.listeners[event] = this.listeners[event] || []).push(listener);
-    }
+    on = (event, listener) => {
+        (this.listeners[event] || (this.listeners[event] = [])).push(listener);
 
-    emit(event, ...args) {
-        if (this.listeners[event]) {
-            this.listeners[event].forEach(listener => listener(...args));
-        }
-    }
+    };
+
+    emit = (event, ...args) => {
+        this.listeners[event]?.forEach(listener => listener(...args));
+    };
 }
 
 export {Notifier};

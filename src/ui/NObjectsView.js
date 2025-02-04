@@ -10,12 +10,10 @@ export default class NObjectsView {
 
     }
 
-    render() {
-
-        this.listView.render(); // Render the ListView
+    render = () => {
+        this.listView.render();
         this.el.innerHTML = '';
         this.el.appendChild(this.listView.el);
 
-
-    }
+    };
 }

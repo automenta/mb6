@@ -57,17 +57,11 @@ export class App {
     }
 
     applyStylesheet(filename) {
-        const themeFile = `src/ui/css/${filename}`;
-        const linkElements = document.querySelectorAll('link[rel="stylesheet"][data-theme]');
-        linkElements.forEach(link => link.remove());
-
-
-        const link = document.createElement('link');
+        document.querySelectorAll('link[rel="stylesheet"][data-theme]').forEach(link => link.remove());
+        const link = document.head.appendChild(document.createElement('link'));
         link.rel = 'stylesheet';
         link.dataset.theme = true;
-        document.head.appendChild(link);
-        link.href = themeFile;
-
+        link.href = `src/ui/css/${filename}`;
     }
 
 
@@ -93,12 +87,11 @@ export class App {
     }
 
     setContentView(viewName, obj) {
-        const view = this.views[viewName]
-        if (view) {
-            this.mainView.setContentView(view, obj)
-        } else {
-            console.warn('Unknown view:', viewName)
+        const view = this.views[viewName];
+        if (!view) {
+            throw new Error(`Unknown view: ${viewName}`);
         }
+        this.mainView.setContentView(view, obj);
     }
 }
 

@@ -7,25 +7,22 @@ export default class DatabaseView {
     }
 
     render() {
-        this.el.innerHTML = ''; // Clear previous content
-
+        this.el.innerHTML = '';
 
         const objectList = Array.from(this.objects.values());
 
-        if (objectList.length === 0) {
+        if (!objectList.length) {
             this.el.textContent = 'No objects in the database.';
             return;
         }
 
-
-        const ul = document.createElement('ul');
-        objectList.forEach(obj => {
+        const ul = this.el.appendChild(document.createElement('ul'));
+        objectList.map(obj => {
             const li = document.createElement('li');
             li.textContent = `Object ID: ${obj.id}, Content: ${obj.content}`;
-            ul.appendChild(li);
-        });
+            return li;
+        }).forEach(li => ul.appendChild(li));
 
-        this.el.appendChild(ul);
 
     }
 }

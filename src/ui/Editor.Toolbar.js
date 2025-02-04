@@ -15,35 +15,25 @@ export default class EditorToolbar {
     }
 
     buildToolbar() {
-const boldButton = document.createElement('button');
-boldButton.innerHTML = '<b>B</b>';
-boldButton.className = 'toolbar-button';
-boldButton.addEventListener('click', () => {
-    document.execCommand('bold', false, null);
-});
-        //const signButton = document.createElement('button');
-        //signButton.textContent = 'Sign NObject';
-        //signButton.className = 'toolbar-button'; // Add class to sign button
-        //signButton.addEventListener('click', () => this.onSign?.(this.object));
+        const createButton = (text, command) => {
+            const button = document.createElement('button');
+            button.innerHTML = text;
+            button.className = 'toolbar-button';
+            button.addEventListener('click', () => document.execCommand(command, false, null));
+            return button;
+        };
 
-const italicButton = document.createElement('button');
-italicButton.innerHTML = '<i>I</i>';
-italicButton.className = 'toolbar-button';
-italicButton.addEventListener('click', () => {
-    document.execCommand('italic', false, null);
-});
-const underlineButton = document.createElement('button');
-underlineButton.innerHTML = '<u>U</u>';
-underlineButton.className = 'toolbar-button';
-underlineButton.addEventListener('click', () => {
-    document.execCommand('underline', false, null);
-});
+        const boldButton = createButton('<b>B</b>', 'bold');
+        const italicButton = createButton('<i>I</i>', 'italic');
+        const underlineButton = createButton('<u>U</u>', 'underline');
+
+
         const insertMenu = document.createElement('select');
-        insertMenu.className = 'toolbar-select'; // Add class to insert menu
+        insertMenu.className = 'toolbar-select';
         insertMenu.innerHTML = `
-                    <option value="" disabled selected>Insert...</option>
-                    ${['Person', 'Place', 'Date', 'Price'].map(type => `<option value="${type}">${type} Class</option>`).join('')}
-                `;
+            <option value="" disabled selected>Insert...</option>
+            ${['Person', 'Place', 'Date', 'Price'].map(type => `<option value="${type}">${type} Class</option>`).join('')}
+        `;
         insertMenu.addEventListener('change', () => {
             if (insertMenu.value) {
                 this.onInsertSemantic?.(this.object, insertMenu.value);
@@ -54,17 +44,15 @@ underlineButton.addEventListener('click', () => {
         const insertTagBtn = document.createElement('button');
         insertTagBtn.type = 'button';
         insertTagBtn.textContent = 'Insert Tag';
-        insertTagBtn.className = 'toolbar-button'; // Add class to insert tag button
+        insertTagBtn.className = 'toolbar-button';
         insertTagBtn.addEventListener('click', () => window.insertTagWidget?.());
 
         this.el.append(
-boldButton,
-italicButton,
-underlineButton,
-            //signButton,
+            boldButton,
+            italicButton,
+            underlineButton,
             insertMenu,
-            insertTagBtn,
+            insertTagBtn
         );
-
     }
 }

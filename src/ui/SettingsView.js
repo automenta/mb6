@@ -18,8 +18,7 @@ export default class SettingsView {
 
         const themeSwitcher = el.querySelector('#theme-switcher');
         themeSwitcher.addEventListener('change', () => {
-            const selectedTheme = themeSwitcher.value;
-            this.applyStylesheet(selectedTheme);
+            this.applyStylesheet(themeSwitcher.value)
         });
 
         const darkModeToggle = el.querySelector('#dark-mode-toggle');
@@ -30,7 +29,5 @@ export default class SettingsView {
         this.el = el;
     }
 
-    render() {
-        return this.el;
-    }
+    render = () => this.el
 }

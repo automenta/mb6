@@ -5,10 +5,9 @@ export default class NotificationManager {
         this.notifier = notifier;
 
         this.notifier.on('notify', message => {
-            this.notifications.push({message, timestamp: Date.now()});
-            if (location.hash === '#notifications') {
-                this.mainView.setContentView('home', this.notifications);
-            }
+            this.notifications.push({ message, timestamp: Date.now() });
+            (location.hash === '#notifications') && this.mainView.setContentView('home', this.notifications);
         });
+
     }
 }

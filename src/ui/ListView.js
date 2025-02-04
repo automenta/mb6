@@ -5,27 +5,25 @@ export default class ListView {
         this.pluginManager = pluginManager;
     }
 
-    createListItem(obj) {
+    createListItem = obj => {
         const item = document.createElement('li');
         item.textContent = obj.name;
 
-        const editButton = document.createElement('button');
+        const editButton = item.appendChild(document.createElement('button'));
         editButton.textContent = 'Edit';
-        editButton.addEventListener('click', () => { /* TODO */ });
-        item.appendChild(editButton);
+        editButton.addEventListener('click', () => {  });
 
-        const deleteButton = document.createElement('button');
+        const deleteButton = item.appendChild(document.createElement('button'));
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => this.objects.delete(obj.id) && this.render());
-        item.appendChild(deleteButton);
+
 
         return item;
-    }
+    };
 
-    render() {
+    render = () => {
         this.el.innerHTML = '';
-        Array.from(this.objects.values())
-            .map(this.createListItem.bind(this))
-            .forEach(item => this.el.appendChild(item));
-    }
+        Array.from(this.objects.values()).map(this.createListItem).forEach(item => this.el.appendChild(item));
+
+    };
 }

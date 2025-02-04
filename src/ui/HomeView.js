@@ -13,16 +13,11 @@ export class HomeView {
 
 
     }
+render() {
+    this.el.innerHTML = '';
+    this.notificationView.render(this.notifications);
+    this.el.appendChild(this.notificationView.el);
+}
 
-    render() {
-        this.el.innerHTML = ''; // Clear previous content
-
-        // Notifications List
-
-        this.notificationView.render(this.notifications);
-        this.el.appendChild(this.notificationView.el);
-
-
-    }
 
 }

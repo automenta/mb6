@@ -22,20 +22,23 @@ export default class EditorMetadata {
 this.yname = this.ydoc.getText('name');
 this.yname.insert(0, this.object.name ?? '');
 this.nameInput.value = this.yname.toString();
-this.yname.observe(() => {
+this.nameInput.addEventListener('input', () => {
+    this.yname.delete(0, this.yname.length);
+    this.yname.insert(0, this.nameInput.value);
     this.object.name = this.yname.toString();
     this.onSave?.(this.object);
-    this.nameInput.addEventListener('input', () => {
-        this.yname.delete(0, this.yname.length);
-        this.yname.insert(0, this.nameInput.value);
-    });
+});
+
+this.yname.observe(() => {
+    this.nameInput.value = this.yname.toString();
+
 });
         this.el.appendChild(this.nameInput);
 
 
     }
 
-    get element() {
+    get el() {
         return this.el;
     }
 

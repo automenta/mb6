@@ -8,59 +8,56 @@ export default class ObjectManager {
         this.pluginManager = pluginManager;
         this.nObjectsView = nObjectsView;
         this.emitter = emitter;
-        (async () => {
-            await this.loadObjects();
-        })();
+        this.loadObjects();
     }
 
-    async loadObjects() {
-        const objects = await DB.getObjects();
-        objects.forEach(obj => this.objects.set(obj.id, obj));
+    loadObjects = async () => {
+        (await DB.getObjects()).forEach(obj => this.objects.set(obj.id, obj));
         this.renderObjects();
-    }
 
-    deleteObject(obj) {
+    };
+
+    deleteObject = obj => {
         this.objects.delete(obj.id);
         this.renderObjects();
-    }
 
-    createNObject(name, content, properties, tags) {
+    };
+
+    createNObject = (name, content, properties, tags) => {
         const newNObject = NObjectFactory.create(this.objects, this.pluginManager, name, content, properties, tags);
         this.objects.set(newNObject.id, newNObject);
         addObjectToIndex(newNObject.id);
-
         this.renderObjects();
         return newNObject;
-    }
 
-    getNObject(id) {
-        return this.objects.get(id);
-    }
+    };
 
-    async updateNObject(id, updates) {
+    getNObject = id => this.objects.get(id);
+
+
+    updateNObject = async (id, updates) => {
         const existingNObject = this.objects.get(id);
-        if (!existingNObject) {
-            return null; // Or throw an error
-        }
-        Object.assign(existingNObject, updates); // Or a more sophisticated merging strategy
+        if (!existingNObject) return null;
+        Object.assign(existingNObject, updates);
         await DB.updateObject(existingNObject);
         this.emitter.emit('objectUpdated');
         this.renderObjects();
         return existingNObject;
-    }
 
-    async deleteNObject(id) {
-        await DB.deleteObjectFromIndex(id); // Remove from index
+
+    };
+
+    deleteNObject = async id => {
+        await DB.deleteObjectFromIndex(id);
         this.objects.delete(id);
         this.renderObjects();
-    }
 
-    renderObjects() {
-        this.nObjectsView.render();
-    }
+    };
+
+    renderObjects = () => this.nObjectsView.render();
 
 
-    createObject() {
-        return NObjectFactory.create(this.objects, this.pluginManager);
-    }
+
+    createObject = () => NObjectFactory.create(this.objects, this.pluginManager);
+
 }

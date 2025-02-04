@@ -16,16 +16,13 @@ export default class EditorView {
             this.el.textContent = 'No object selected.';
             return;
         }
-
-        this.editor = new Editor({ // Create and store the editor instance
+        this.editor = new Editor({
             object: obj,
             objects: this.objects,
             pluginManager: this.pluginManager,
             emitter: this.emitter
         });
-
         this.el.appendChild(this.editor.el);
-
 
     }
 }

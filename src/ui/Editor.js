@@ -24,7 +24,7 @@ export default class Editor {
         // Create a container for the metadata and toolbar
         const headerContainer = document.createElement('div');
         headerContainer.classList.add('editor-header');
-        headerContainer.appendChild(this.metadata.element);
+        headerContainer.appendChild(this.metadata.el);
         headerContainer.appendChild(this.toolbar.el);
 
 
@@ -38,37 +38,25 @@ export default class Editor {
 
         this.ytext.observe(async () => {
             if (this.object.content !== this.ytext.toString()) {
-                this.object.content = this.ytext.toString();
                 this.savedIndicator.textContent = 'Saving...';
+                this.object.content = this.ytext.toString();
                 await DB.updateObject(this.object);
                 this.emitter.emit('objectUpdated');
                 this.savedIndicator.textContent = 'Saved';
             }
         });
-        this.savedIndicator.textContent = 'Saved';
+
 
         this.contentEditor.addEventListener('input', () => {
             this.ytext.delete(0, this.ytext.length);
-            this.ytext.insert(0, this.contentEditor.innerHTML); // Use innerHTML for div
+            this.ytext.insert(0, this.contentEditor.innerHTML);
         });
+
+        this.savedIndicator.textContent = 'Saved'; // Set initial state to 'Saved'
+
+
     }
 
-
-    saveObject = async (object) => {
-        await DB.updateObject(object);
-        this.emitter.emit('objectUpdated');
-    }
-
-    insertSemantic = (object, value) => {
-        // Handle semantic insertion
-        console.log('Insert semantic', object, value);
-    }
-
-    signObject = (object) => {
-
-        // Handle object signing
-        console.log('Sign object', object);
-    }
 
 
     _createElement(nObject) {

@@ -10,14 +10,13 @@ export class UIPlugins {
         this.plugins = [];
     }
 
-    add(plugin) {
+    add = plugin => {
         this.plugins.push(plugin);
         console.log(`[Client Plugin Manager] Registered plugin: ${plugin.name ?? 'Unnamed plugin'}`);
         plugin.init?.();
-    }
+    };
 
-    emit(eventName, data) {
-        this.plugins.forEach(plugin => plugin[eventName]?.(data));
-    }
+    emit = (eventName, data) => this.plugins.forEach(plugin => plugin[eventName]?.(data));
+
 }
         

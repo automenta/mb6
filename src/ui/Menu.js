@@ -20,15 +20,14 @@ export default class Menu {
         `;
 
         const viewSelector = el.querySelector('#view-selector');
-        viewSelector.addEventListener('change', ({target}) => {
-            if (target.tagName === 'SELECT') {
-                this.onNavigate(target.value);
-            }
+        viewSelector.addEventListener('change', ({ target }) => {
+            this.onNavigate(target.value);
+
         });
 
 
-        el.addEventListener('click', ({target}) => {
-            if (target.tagName === 'A' && target.dataset.navigo) {
+        el.addEventListener('click', ({ target }) => {
+            if (target.dataset.navigo) {
                 this.onNavigate(target.getAttribute('href'));
             } else if (target.id === 'create-nobject') {
                 const newNObject = this.uiManager.createNObject('Untitled', '', {}, []);
