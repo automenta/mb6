@@ -1,3 +1,15 @@
+#notification-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+
+#dark-mode-toggle {
+    margin-top: 1rem;
+}
+
 /* General styles */
 body {
     font-family: sans-serif;

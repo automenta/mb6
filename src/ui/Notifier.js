@@ -7,15 +7,13 @@ class Notifier {
             return Notifier.instance;
         }
         Notifier.instance = this;
-        this.listeners = {}; // Initialize listeners
+        this.listeners = {};
         this.container = document.getElementById('notification-container') ?? this.createContainer();
     }
 
     createContainer() {
-        const el = Object.assign(document.createElement('div'), {
-            id: 'notification-container',
-            style: 'position: fixed; top: 1rem; right: 1rem; z-index: 1000;' // Use string for style
-        });
+        const el = document.createElement('div');
+        el.id = 'notification-container';
         document.body.appendChild(el);
         return el;
     }
@@ -28,7 +26,7 @@ class Notifier {
         this.container.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
 
-        this.emit('notify', message); // Emit the 'notify' event
+        this.emit('notify', message);
     }
 
 
@@ -43,4 +41,4 @@ class Notifier {
     }
 }
 
-export {Notifier}; // Export the class
+export { Notifier };

@@ -16,9 +16,9 @@ export const insertTagWidget = () => {
     span.dataset.value = value;
     span.contentEditable = 'false';
     span.innerText = `${type}: ${value}`;
-    span.addEventListener('dblclick', () => {
-        if (confirm('Remove this tag?')) span.remove();
-    });
+    span.addEventListener('dblclick', () => confirm('Remove this tag?') && span.remove());
+
+
     insertNodeAtCaret(span);
 };
 

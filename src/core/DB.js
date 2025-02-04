@@ -1,14 +1,17 @@
 import {IndexeddbPersistence} from 'y-indexeddb';
-import {LeveldbPersistence} from "y-leveldb";
 
 export default class DB {
     constructor(doc, dbName = 'nobject-editor') {
         if (typeof window === 'undefined') {
-            console.log('LevelDB initialization pending implementation.');
-            this.persistence = new LeveldbPersistence(dbName, doc);
+            import('y-leveldb').then(({ LeveldbPersistence }) => {
+                this.persistence = new LeveldbPersistence(dbName, doc);
+            }).catch(err => {
+                console.error('Failed to load LeveldbPersistence:', err);
+            });
         } else {
             this.persistence = new IndexeddbPersistence(dbName, doc);
         }
+
 
         this.persistence.on('synced', () => console.log('Content from IndexedDB loaded'));
     }

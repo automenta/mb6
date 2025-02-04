@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import NObject from './obj.js';
+import NObject from './NObject.js';
 
 /**
  * Factory class for creating NObject instances.
