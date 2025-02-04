@@ -1,7 +1,3 @@
-import * as Y from 'yjs';
-import DB from '../core/DB.js';
-
-
 export default class EditorMetadata {
 
     constructor({ object, pluginManager, objects, onSave, ydoc }) {
@@ -19,28 +15,16 @@ export default class EditorMetadata {
         this.nameInput.className = 'name-input'; // Add class to name input
         this.nameInput.value = this.object.name;
         this.nameInput.placeholder = 'NObject Name';
-this.yname = this.ydoc.getText('name');
-this.yname.insert(0, this.object.name ?? '');
-this.nameInput.value = this.yname.toString();
-this.nameInput.addEventListener('input', () => {
-    this.yname.delete(0, this.yname.length);
-    this.yname.insert(0, this.nameInput.value);
-    this.object.name = this.yname.toString();
-    this.onSave?.(this.object);
-});
+        this.yname = this.ydoc.getText('name');
+        this.yname.insert(0, this.object.name ?? '');
+        this.nameInput.value = this.yname.toString();
+        this.nameInput.addEventListener('input', () => {
+            this.yname.delete(0, this.yname.length);
+            this.yname.insert(0, this.nameInput.value);
+            this.object.name = this.yname.toString();
+            this.onSave?.(this.object);
+        });
 
-this.yname.observe(() => {
-    this.nameInput.value = this.yname.toString();
-
-});
         this.el.appendChild(this.nameInput);
-
-
     }
-
-    get el() {
-        return this.el;
-    }
-
-
 }
