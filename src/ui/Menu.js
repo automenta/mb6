@@ -8,65 +8,33 @@ export default class Menu {
         el.className = 'menu'; // Add menu class
         el.innerHTML = `
             <button id="create-nobject" class="menu-button">+</button>
-            <button id="settings" class="menu-button">Settings</button>
+            <select id="view-selector">
+                <option value="#me" data-navigo>Me</option>
+                <option value="#friends" data-navigo>Friends</option>
+                <option value="#network" data-navigo>Network</option>
+                <option value="#notifications" data-navigo>Notifications</option>
+                <option value="#database" data-navigo>Database</option>
+                <option value="#settings" data-navigo>Settings</option>
+            </select>
+
         `;
-        const themeSwitcherContainer = this.createThemeSwitcher();
-        themeSwitcherContainer.className = 'theme-switcher-container'; // Add class to theme switcher container
-        el.appendChild(themeSwitcherContainer);
+
+        const viewSelector = el.querySelector('#view-selector');
+        viewSelector.addEventListener('change', ({target}) => {
+            if (target.tagName === 'SELECT') {
+                this.onNavigate(target.value);
+            }
+        });
+
 
         el.addEventListener('click', ({target}) => {
-            if (target.id === 'create-nobject') {
+            if (target.tagName === 'A' && target.dataset.navigo) {
+                this.onNavigate(target.getAttribute('href'));
+            } else if (target.id === 'create-nobject') {
                 const newNObject = this.uiManager.createNObject('Untitled', '', {}, []);
                 this.onNavigate(`#editor/${newNObject.id}`);
-
-            } else if (target.id === 'settings') {
-                // Handle settings action
             }
         });
         this.el = el;
-    }
-
-    applyStylesheet(filename) {
-        const themeFile = `src/ui/css/${filename}`;
-        const linkElements = document.querySelectorAll('link[rel="stylesheet"][data-theme]');
-        linkElements.forEach(link => link.remove());
-
-
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.dataset.theme = true;
-        document.head.appendChild(link);
-        link.href = themeFile;
-
-    }
-
-    createThemeSwitcher() {
-        const container = document.createElement('div');
-        container.innerHTML = `
-            <select id="theme-switcher" class="theme-switcher">
-                <option value="styles-theme2.css">Theme 2</option>
-                <option value="styles-theme1.css">Theme 1</option>
-                <option value="styles-theme3.css">Theme 3</option>
-            </select>
-            <div class="dark-mode-toggle-container">  </div>
-<input type="checkbox" id="dark-mode-toggle" class="dark-mode-toggle">
-            <label for="dark-mode-toggle" class="dark-mode-label">Dark Mode</label>
-
-        `;
-
-        const themeSwitcher = container.querySelector('#theme-switcher');
-        themeSwitcher.addEventListener('change', () => {
-            // Apply the selected theme
-            const selectedTheme = themeSwitcher.value;
-            // Apply the selected theme
-            this.applyStylesheet(selectedTheme);
-        });
-
-        const darkModeToggle = container.querySelector('#dark-mode-toggle');
-        darkModeToggle.addEventListener('change', () => {
-            document.body.classList.toggle('dark');
-        });
-
-        return container;
     }
 }

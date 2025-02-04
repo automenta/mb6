@@ -21,10 +21,10 @@ boldButton.className = 'toolbar-button';
 boldButton.addEventListener('click', () => {
     document.execCommand('bold', false, null);
 });
-        const signButton = document.createElement('button');
-        signButton.textContent = 'Sign NObject';
-        signButton.className = 'toolbar-button'; // Add class to sign button
-        signButton.addEventListener('click', () => this.onSign?.(this.object));
+        //const signButton = document.createElement('button');
+        //signButton.textContent = 'Sign NObject';
+        //signButton.className = 'toolbar-button'; // Add class to sign button
+        //signButton.addEventListener('click', () => this.onSign?.(this.object));
 
 const italicButton = document.createElement('button');
 italicButton.innerHTML = '<i>I</i>';
@@ -41,7 +41,7 @@ underlineButton.addEventListener('click', () => {
         const insertMenu = document.createElement('select');
         insertMenu.className = 'toolbar-select'; // Add class to insert menu
         insertMenu.innerHTML = `
-                    <option value="" disabled selected>Insert semantic widget...</option>
+                    <option value="" disabled selected>Insert...</option>
                     ${['Person', 'Place', 'Date', 'Price'].map(type => `<option value="${type}">${type} Class</option>`).join('')}
                 `;
         insertMenu.addEventListener('change', () => {
@@ -61,7 +61,7 @@ underlineButton.addEventListener('click', () => {
 boldButton,
 italicButton,
 underlineButton,
-            signButton,
+            //signButton,
             insertMenu,
             insertTagBtn,
         );

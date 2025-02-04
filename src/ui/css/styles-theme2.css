@@ -117,6 +117,9 @@ body.dark .editor-container {
     background-color: #272727; /* Darker background */
 }
 
+.editor-metadata input {
+    font-size:150%;
+}
 
 .editor-toolbar {
     display: flex;
@@ -128,7 +131,6 @@ body.dark .editor-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
     border-bottom: 1px solid #ccc;
     background-color: #f0f0f0;
     transition: background-color 0.3s, border-color 0.3s;
@@ -175,6 +177,9 @@ body.dark .content-editor {
 body.dark #notifications-list li {
     background-color: #555; /* Darker background for notifications in dark mode */
 }
+.nobject-list-container {
+    
+}
 
 
 .saved-indicator {
@@ -208,4 +213,28 @@ body.dark .saved-indicator {
     #sidebar {
         width: 100%;
     }
+}
+.menu {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-secondary);
+  padding: 0.5rem;
+}
+
+.menu-button {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+#status-view {
+    font-size: 75%;
+    opacity: 0.75;
 }

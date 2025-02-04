@@ -12,6 +12,7 @@ import { UIPlugins } from './UIPlugins.js'
 import Notifier from './Notifier.js'
 import NObject from '../core/NObject.js'
 import { EventEmitter } from 'events'
+import SettingsView from './SettingsView.js';
 
 export class App {
     constructor() {
@@ -27,7 +28,8 @@ export class App {
             home: new HomeView(this.objects, this.pluginManager, this.notifications),
             nObjects: new NObjectsView(this.objects, this.pluginManager),
             database: new DatabaseView(this.objects, this.pluginManager),
-            editor: new EditorView(this.objects, this.pluginManager, this.emitter)
+            editor: new EditorView(this.objects, this.pluginManager, this.emitter),
+            settings: new SettingsView({applyStylesheet: filename => this.applyStylesheet(filename)})
         }
 
         this.nObjectsView = this.views.nObjects
@@ -53,6 +55,21 @@ export class App {
 
         this.setContentView('home')
     }
+
+    applyStylesheet(filename) {
+        const themeFile = `src/ui/css/${filename}`;
+        const linkElements = document.querySelectorAll('link[rel="stylesheet"][data-theme]');
+        linkElements.forEach(link => link.remove());
+
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.dataset.theme = true;
+        document.head.appendChild(link);
+        link.href = themeFile;
+
+    }
+
 
     createNObject(name, content, properties, tags) {
         const newNObject = this.objectManager.createNObject(name, content, properties, tags)

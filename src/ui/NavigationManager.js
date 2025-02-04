@@ -4,11 +4,11 @@ export default class NavigationManager {
         this.views = views;
 
         this.routes = {
-            '#home': () => this.uiManager.setContentView('home'),
-            '#nObjects': () => this.uiManager.setContentView('nObjects'),
-            '#database': () => this.uiManager.setContentView('database'),
-            '#editor': () => this.uiManager.setContentView('editor'), // Add editor route
-            '': () => this.uiManager.setContentView('home') // Default to home view
+            '#home': 'home',
+            '#nObjects': 'nObjects',
+            '#database': 'database',
+            '#settings': 'settings',
+            '': 'home' // Default to home view
         };
     }
 
@@ -18,15 +18,15 @@ export default class NavigationManager {
     }
 
     handleNavigation(route) {
+        let viewName = this.routes[route] || this.routes[''];
+        let obj = null;
 
-        const routeHandler = this.routes[route] || this.routes[''];
-
-
-        if (route.startsWith('#editor')) {
+        if (route.startsWith('#editor/')) {
+            viewName = 'editor';
             const objectId = this.getObjectIdFromRoute(route);
-            this.uiManager.setContentView('editor', objectId ? this.uiManager.getNObject(objectId) : null);
-        } else {
-            routeHandler();
+            obj = objectId ? this.uiManager.getNObject(objectId) : null;
         }
+
+        this.uiManager.setContentView(viewName, obj);
     }
 }
