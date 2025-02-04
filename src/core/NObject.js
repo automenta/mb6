@@ -68,6 +68,10 @@ ${other.content}`;
         }
         return new NObject(nanoid(), `Merged ${this.name} and ${other.name}`, mergedContent, mergedProperties, mergedTags);
     }
+    getContentType() {
+        return typeof this.content === 'string' ? 'text' : (typeof this.content === 'object' ? 'json' : 'unknown');
+    }
+
 }
 
 export default NObject;

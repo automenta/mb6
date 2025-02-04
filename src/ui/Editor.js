@@ -28,19 +28,15 @@ export default class Editor {
         this.ytext.insert(0, this.object.content ?? '');
         this.contentEditor.value = this.ytext.toString();
 
-console.log('ytext observed', this.ytext);
-        this.ytext.observe(() => {
-
+        this.ytext.observe(async () => {
             if (this.object.content !== this.ytext.toString()) {
                 this.object.content = this.ytext.toString();
                 this.savedIndicator.textContent = 'Saving...';
-                DB.updateObject(this.object).then(() => {
-                    this.emitter.emit('objectUpdated');
-                    this.savedIndicator.textContent = 'Saved';
-                });
-}
+                await DB.updateObject(this.object);
+                this.emitter.emit('objectUpdated');
+                this.savedIndicator.textContent = 'Saved';
+            }
         });
-
         this.savedIndicator.textContent = 'Saved';
 
         this.contentEditor.addEventListener('input', () => {

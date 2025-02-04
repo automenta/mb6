@@ -16,14 +16,12 @@ export default class EditorContent {
 
         this.ytext.bind(this.contentEditor);
 
-        const updateContent = () => {
-            this.object.content = this.ytext.toString();
-            DB.updateObject(this.object).then(() => {
-                this.onUpdate?.(this.object);
-                this.emitter.emit('objectUpdated');
-            });
-        };
-
+        const updateContent = async () => {
+                    this.object.content = this.ytext.toString();
+                    await DB.updateObject(this.object);
+                    this.onUpdate?.(this.object);
+                    this.emitter.emit('objectUpdated');
+                };
         this.ytext.observe(updateContent);
 
         this.contentEditor.addEventListener('input', updateContent);

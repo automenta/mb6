@@ -5,8 +5,7 @@ const doc = new Y.Doc()
 const dbName = 'nobject-editor';
 const persistence = new IndexeddbPersistence(dbName, doc);
 
-persistence.on('synced', () => console.log('Content from IndexedDB loaded'));
-
+persistence.on('synced', () => {});
 export const addObjectToIndex = async (objectId) => {
     const index = await persistence.get('objectIndex') || [];
     index.push(objectId);

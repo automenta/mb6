@@ -23,19 +23,12 @@ this.yname.insert(0, this.object.name ?? '');
 this.nameInput.value = this.yname.toString();
 this.yname.observe(() => {
     this.object.name = this.yname.toString();
-
-
-console.log('onSave called', this.object);
-    if (this.onSave) {
-        this.onSave(this.object);
-    }
+    this.onSave?.(this.object);
+    this.nameInput.addEventListener('input', () => {
+        this.yname.delete(0, this.yname.length);
+        this.yname.insert(0, this.nameInput.value);
+    });
 });
-
-this.nameInput.addEventListener('input', () => {
-    this.yname.delete(0, this.yname.length);
-    this.yname.insert(0, this.nameInput.value);
-});
-
         this.el.appendChild(this.nameInput);
 
 

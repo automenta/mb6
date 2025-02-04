@@ -22,12 +22,9 @@ export default class EditorToolbar {
 
         const insertMenu = document.createElement('select');
         insertMenu.innerHTML = `
-            <option value="" disabled selected>Insert semantic widget...</option>
-            <option value="Person">Person Class</option>
-            <option value="Place">Place Class</option>
-            <option value="Date">Date Property</option>
-            <option value="Price">Price Property</option>
-        `;
+                    <option value="" disabled selected>Insert semantic widget...</option>
+                    ${['Person', 'Place', 'Date', 'Price'].map(type => `<option value="${type}">${type} Class</option>`).join('')}
+                `;
         insertMenu.addEventListener('change', () => {
             if (insertMenu.value) {
                 this.onInsertSemantic?.(this.object, insertMenu.value);
