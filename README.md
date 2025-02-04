@@ -150,7 +150,7 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 - Redundant declarations are removed.
 - Related test cases are combined.
 - Test names are descriptive.
-
+- Styling/CSS: "Form follows Function," prioritizing functionality over aesthetics unless it doesn't impact usability.
 ---
 
 Feedback and contributions are welcome.

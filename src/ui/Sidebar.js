@@ -18,8 +18,18 @@ export default class Sidebar {
         this.statusView = new StatusView(notifier);
         const el = document.createElement('div');
         el.id = 'sidebar';
-        el.appendChild(this.menu.el);
-        el.appendChild(this.viewSwitch.el);
+        el.classList.add('sidebar'); // Add sidebar class
+
+        const menuContainer = document.createElement('div');
+        menuContainer.classList.add('menu-container');
+        menuContainer.appendChild(this.menu.el);
+        el.appendChild(menuContainer);
+
+
+        const viewSwitchContainer = document.createElement('div');
+        viewSwitchContainer.classList.add('view-switch-container');
+        viewSwitchContainer.appendChild(this.viewSwitch.el);
+        el.appendChild(viewSwitchContainer);
 
         const customRenderer = (obj) => {
             const thumbnail = new NObjectThumbnail(obj).el;
@@ -33,8 +43,17 @@ export default class Sidebar {
         this.nObjectList.customRenderer = customRenderer; // Set the custom renderer
 
 
-        el.appendChild(this.nObjectList.el);
-        el.appendChild(this.statusView.el);
+        const nObjectListContainer = document.createElement('div');
+        nObjectListContainer.classList.add('nobject-list-container');
+        nObjectListContainer.appendChild(this.nObjectList.el);
+        el.appendChild(nObjectListContainer);
+
+        const statusViewContainer = document.createElement('div');
+        statusViewContainer.classList.add('status-view-container');
+        statusViewContainer.appendChild(this.statusView.el);
+        el.appendChild(statusViewContainer);
+
+
         this.el = el;
     }
 

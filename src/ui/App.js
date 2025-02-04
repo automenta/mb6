@@ -1,4 +1,4 @@
-import './css/styles.css'
+import './css/styles-theme2.css'
 import { MainView } from './MainView.js'
 import { HomeView } from './HomeView.js'
 import NObjectsView from './NObjectsView.js'

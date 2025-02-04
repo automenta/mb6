@@ -16,6 +16,7 @@ export default class EditorMetadata {
 
         this.nameInput = document.createElement('input');
         this.nameInput.type = 'text';
+        this.nameInput.className = 'name-input'; // Add class to name input
         this.nameInput.value = this.object.name;
         this.nameInput.placeholder = 'NObject Name';
 this.yname = this.ydoc.getText('name');

@@ -1,0 +1,298 @@
+/* Psychedelic Theme - Enhanced with Glitch Effects */
+
+:root {
+    --font-family: 'Comic Sans MS', cursive, sans-serif;
+    --color-background: #000;
+    --color-text: #fff;
+    --color-primary: #FF69B4;
+    --color-secondary: #00FFFF;
+    --color-accent: #90EE90;
+    --border-radius: 10px;
+    --transition-duration: 0.3s;
+}
+
+body {
+    font-family: var(--font-family);
+    background: radial-gradient(circle, var(--color-primary), var(--color-secondary));
+    color: var(--color-text);
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+    animation: gradientAnimation 5s linear infinite;
+    background-size: 400% 400%;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Glitch Effect - Applied to the entire UI */
+.glitch {
+    animation: glitch 1s linear infinite;
+}
+
+@keyframes glitch {
+    2%, 6%, 10%, 14%, 18% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    4%, 8%, 12%, 16%, 20% {
+        transform: translate3d(-2px, 0, 0);
+    }
+
+    0%, 5%, 9%, 13%, 17%, 21% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+
+/* Main layout */
+#sidebar {
+    width: 200px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-right: 2px solid var(--color-accent);
+    overflow-y: auto;
+    transition: background-color var(--transition-duration), border-color var(--transition-duration);
+    animation: sidebarGlow 10s linear infinite;
+}
+
+@keyframes sidebarGlow {
+    0% { box-shadow: 0 0 10px var(--color-accent); }
+    50% { box-shadow: 0 0 20px var(--color-primary); }
+    100% { box-shadow: 0 0 10px var(--color-accent); }
+}
+
+#main-view {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: background-color var(--transition-duration);
+    animation: mainViewPulse 15s ease-in-out infinite;
+}
+
+@keyframes mainViewPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 15px var(--color-accent);
+    animation: textGlow 5s linear infinite;
+}
+
+@keyframes textGlow {
+    0% { text-shadow: 0 0 15px var(--color-accent); }
+    50% { text-shadow: 0 0 25px var(--color-primary); }
+    100% { text-shadow: 0 0 15px var(--color-accent); }
+}
+
+/* Links */
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition-duration);
+    animation: rainbowText 8s linear infinite;
+}
+
+@keyframes rainbowText {
+    0% { color: red; }
+    14% { color: orange; }
+    28% { color: yellow; }
+    42% { color: green; }
+    57% { color: blue; }
+    71% { color: indigo; }
+    85% { color: violet; }
+    100% { color: red; }
+}
+
+a:hover {
+    color: var(--color-primary);
+    text-shadow: 0 0 10px var(--color-primary);
+    animation: none;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.button {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-duration), transform var(--transition-duration);
+    animation: buttonPulse 3s ease-in-out infinite;
+}
+
+@keyframes buttonPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.button:hover {
+    background-color: var(--color-primary);
+    transform: scale(1.2);
+    box-shadow: 0 0 15px var(--color-primary);
+    animation: none;
+}
+
+/* NObject Thumbnails */
+.nobject-thumbnail {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border: 2px solid var(--color-accent);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: background-color var(--transition-duration), border-color var(--transition-duration), transform var(--transition-duration);
+    box-shadow: 0 0 5px var(--color-secondary);
+    animation: thumbnailGlow 7s linear infinite;
+}
+
+@keyframes thumbnailGlow {
+    0% { box-shadow: 0 0 5px var(--color-secondary); }
+    50% { box-shadow: 0 0 15px var(--color-accent); }
+    100% { box-shadow: 0 0 5px var(--color-secondary); }
+}
+
+.nobject-thumbnail:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px var(--color-primary);
+    animation: none;
+}
+
+.nobject-thumbnail img {
+    width: 32px;
+    height: 32px;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    border: 2px solid var(--color-secondary);
+    box-shadow: 0 0 5px var(--color-accent);
+    animation: imageSpin 5s linear infinite;
+}
+
+@keyframes imageSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.nobject-thumbnail .name {
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--color-secondary);
+}
+
+/* Editor */
+.editor-container {
+    border: 2px solid var(--color-accent);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-duration), border-color var(--transition-duration);
+    box-shadow: 0 0 10px var(--color-secondary);
+}
+
+.editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.content-editor {
+    border: 2px solid var(--color-secondary);
+    padding: 0.5rem;
+    min-height: 10rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-duration), border-color var(--transition-duration);
+    box-shadow: 0 0 5px var(--color-accent);
+}
+
+/* Notifications */
+#notifications-view {
+    margin-top: 1rem;
+    overflow-y: auto;
+}
+
+#notifications-list li {
+    padding: 0.5rem;
+    border: 2px solid var(--color-secondary);
+    margin-bottom: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-duration), border-color var(--transition-duration);
+    box-shadow: 0 0 5px var(--color-accent);
+    animation: notificationGlow 12s linear infinite;
+}
+
+@keyframes notificationGlow {
+    0% { box-shadow: 0 0 5px var(--color-accent); }
+    50% { box-shadow: 0 0 15px var(--color-secondary); }
+    100% { box-shadow: 0 0 5px var(--color-accent); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid var(--color-accent);
+    }
+}
+
+
+/* Apply glitch effect to specific elements */
+#sidebar, #main-view, .nobject-thumbnail, .button, .editor-container, #notifications-list li {
+    /* Add other elements here as needed */
+    position: relative; /* Required for glitch effect */
+    overflow: hidden; /* Hide overflowing glitch elements */
+}
+
+
+#sidebar::before, #main-view::before, .nobject-thumbnail::before, .button::before, .editor-container::before, #notifications-list li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    z-index: -1;
+    mix-blend-mode: multiply; /* Blend mode for glitch effect */
+    animation: glitch 2s linear infinite; /* Apply glitch animation */
+    pointer-events: none; /* Prevent interaction with glitch layer */
+}

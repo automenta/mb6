@@ -18,15 +18,23 @@ export default class Editor {
         this.ytext = this.ydoc.getText('content');
         this.savedIndicator = document.createElement('span');
         this.savedIndicator.textContent = 'Saved';
+        this.savedIndicator.className = 'saved-indicator';
 
-        this.el.prepend(this.toolbar.el);
-        this.el.prepend(this.metadata.element);
+
+        // Create a container for the metadata and toolbar
+        const headerContainer = document.createElement('div');
+        headerContainer.classList.add('editor-header');
+        headerContainer.appendChild(this.metadata.element);
+        headerContainer.appendChild(this.toolbar.el);
+
+
+        this.el.prepend(headerContainer);
         this.el.appendChild(this.savedIndicator);
 
 
 
         this.ytext.insert(0, this.object.content ?? '');
-        this.contentEditor.value = this.ytext.toString();
+        this.contentEditor.innerHTML = this.ytext.toString(); // Use innerHTML for div
 
         this.ytext.observe(async () => {
             if (this.object.content !== this.ytext.toString()) {
@@ -41,7 +49,7 @@ export default class Editor {
 
         this.contentEditor.addEventListener('input', () => {
             this.ytext.delete(0, this.ytext.length);
-            this.ytext.insert(0, this.contentEditor.value);
+            this.ytext.insert(0, this.contentEditor.innerHTML); // Use innerHTML for div
         });
     }
 
@@ -67,9 +75,11 @@ export default class Editor {
         const editorContainer = document.createElement('div');
         editorContainer.classList.add('editor-container');
 
-        this.contentEditor = document.createElement('textarea');
+        this.contentEditor = document.createElement('div'); // Create a div element
         this.contentEditor.id = 'content-editor';
-        this.contentEditor.value = nObject.content || '';
+        this.contentEditor.classList.add('content-editor');
+        this.contentEditor.contentEditable = true; // Make the div contentEditable
+        this.contentEditor.innerHTML = nObject.content || ''; // Use innerHTML for div
         editorContainer.appendChild(this.contentEditor);
 
         return editorContainer;
