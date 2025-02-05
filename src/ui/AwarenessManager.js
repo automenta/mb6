@@ -1,10 +1,17 @@
 import * as Y from 'yjs';
 
 class AwarenessManager {
+    ydoc; // The Y.js document layer
+    streams; // Y.js streams for real-time updates
 
     constructor(awareness, editor) {
         this.awareness = awareness;
         this.editor = editor;
+
+        // Initialize Y.js document layer
+        this.ydoc = new Y.Doc();
+        const doc = this.ydoc.get('content');
+        this.streams = new Y.Streams(doc);
 
         setTimeout(() => {
             this.setupAwareness();

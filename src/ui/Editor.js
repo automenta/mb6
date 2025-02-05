@@ -10,9 +10,20 @@ import {Awareness} from 'y-protocols/awareness';
 export default class Editor {
     constructor({ object, pluginManager, objects, emitter, config = { db: DB } }) {
         this.config = config;
-        this.el = this._createElement(object);
         this.object = object;
-        this.ydoc = new Y.Doc();
+        
+        // Initialize Yjs document layer
+        const ydoc = new Y.Doc();
+        const doc = ydoc.get('content');
+        this.ydoc = doc;
+
+        // Set up Y.js streams for real-time updates
+        this.streams = new Y.Streams(doc);
+        this.streams.on('update', () => {
+            this.updateContent();
+        });
+
+        this.el = this._createElement(object);
         this.pluginManager = pluginManager;
         this.objects = objects;
         this.emitter = emitter;
@@ -20,7 +31,7 @@ export default class Editor {
         this.toolbar = new EditorToolbar({});
         this.metadata = new MetadataManager(false); // Placeholder for isReadOnly
         this.tagSelector = new TagSelector(this.el, '');
-        this.awarenessManager = new AwarenessManager(new Awareness(this.ydoc), this.contentEditor);
+        this.awarenessManager = new AwarenessManager(new Awareness(ydoc), this.contentEditor);
 
         this.ytext = this.ydoc.getText('content');
         this.savedIndicator = document.createElement('span');
@@ -65,11 +76,10 @@ export default class Editor {
         const editorContainer = document.createElement('div');
         editorContainer.classList.add('editor-container');
 
-        this.contentEditor = document.createElement('div'); // Create a div element
+        // Create Yjs content element
+        this.contentEditor = document.createElement('yjs-content-element');
         this.contentEditor.id = 'content-editor';
-        this.contentEditor.classList.add('content-editor');
-        this.contentEditor.contentEditable = true; // Make the div contentEditable
-        this.contentEditor.innerHTML = nObject.content || ''; // Use innerHTML for div
+        this.contentEditor.style.contentEditable = true;
         editorContainer.appendChild(this.contentEditor);
 
         return editorContainer;
