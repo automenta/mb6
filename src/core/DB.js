@@ -21,14 +21,19 @@ export default class DB {
      * @returns {Promise<NObject>} - A promise that resolves to the merged NObject.
      */
     mergeNObjects = async (obj1, obj2) => {
-        const merged = obj1.merge(obj2);
-        // Implement data merging logic as described in README.md, including:
-        // - Merging all NObject content into a new merged object.
-        // - Referencing the "parents" (obj1, obj2) in metadata.
-        // - Using a dedicated merging strategy to handle conflicts and data resolution.
+        // Create new merged object with combined properties
+        const merged = new NObject({
+            ...obj1,
+            ...obj2,
+            content: Y.mergeUpdates(Y.encodeStateAsUpdate(obj1.content), Y.encodeStateAsUpdate(obj2.content)),
+            properties: {...obj1.properties, ...obj2.properties}
+        });
+
+        // Set metadata with parent references and merge strategy
         merged.metadata = {
             parents: [obj1.id, obj2.id],
-            mergeStrategy: 'latestWins' // Example strategy, replace with actual implementation
+            mergeStrategy: 'latestWins',
+            mergedAt: new Date().toISOString()
         };
         // Store the merged object using IndexedDB
         await persistence.set(merged.id, merged);

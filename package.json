@@ -32,7 +32,9 @@
     "y-leveldb": "latest",
     "y-protocols": "latest",
     "y-websocket": "latest",
-    "yjs": "latest"
+    "yjs": "latest",
+    "bittorrent-dht": "latest",
+    "libp2p-kad-dht": "latest"
   },
   "devDependencies": {
     "@types/express": "latest",

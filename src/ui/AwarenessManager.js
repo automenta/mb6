@@ -25,7 +25,7 @@ class AwarenessManager {
             const range = sel.getRangeAt(0);
             this.awareness.setLocalStateField('cursor', {
                 anchor: range.startOffset,
-                head: range.endOffset,
+                head: range.endOffset
             });
         }
     }
