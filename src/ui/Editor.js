@@ -1,49 +1,46 @@
+import {WebrtcProvider} from 'y-webrtc';
 import * as Y from 'yjs';
-import { WebrtcProvider } from 'y-webrtc';
 import DB from '../core/DB.js';
+import EditorContent from './Editor.Content.js';
 import EditorToolbar from './Editor.Toolbar.js';
-//import EditorMetadata from './Editor.Metadata.js';
 import AwarenessManager from './AwarenessManager.js';
 import TagSelector from './TagSelector.js';
 import MetadataManager from './MetadataManager.js';
-import {Awareness} from 'y-protocols/awareness';
+
+let webrtcProviderInstance = null;
 
 export default class Editor {
-    constructor({ object, pluginManager, objects, emitter, config = { db: DB } }) {
-        this.config = config;
+    constructor({object, pluginManager, emitter}) {
         this.object = object;
-        
-        // Initialize Yjs document layer
-        const ydoc = new Y.Doc();
-        const doc = ydoc.get('content');
-        this.ydoc = doc;
-
-        // Set up Y.js streams for real-time updates
-        this.streams = new Y.Streams(doc);
-        this.streams.on('update', () => {
-            this.updateContent();
-        });
+        this.pluginManager = pluginManager;
+        this.emitter = emitter;
 
         this.el = this._createElement(object);
-        this.pluginManager = pluginManager;
-        this.objects = objects;
-        this.emitter = emitter;
 
         this.toolbar = new EditorToolbar({});
         this.metadata = new MetadataManager(false); // Placeholder for isReadOnly
         this.tagSelector = new TagSelector(this.el, '');
-        this.awarenessManager = new AwarenessManager(new Awareness(ydoc), this.contentEditor);
-        // Initialize WebrtcProvider
-        this.webrtcProvider = new WebrtcProvider(
-            'nobject-editor-room', // room name
-            this.ydoc,
-            {
-                signaling: [
-                    'wss://signaling.yjs.dev',
-                    'ws://localhost:4444'
-                ]
-            }
-        );
+
+        // Initialize Yjs doc
+        this.ydoc = new Y.Doc();
+        this.ytext = this.ydoc.getText('content') || new Y.Text(object.content);
+
+        this.editorContent = new EditorContent(this.ytext, this.object, null, this.pluginManager, this.emitter);
+
+        // Initialize WebrtcProvider as a singleton
+        if (!webrtcProviderInstance) {
+            webrtcProviderInstance = new WebrtcProvider(
+                'nobject-editor-room', // room name
+                this.ydoc,
+                {
+                    signaling: [
+                        //'wss://signaling.yjs.dev',
+                        //'ws://localhost:4444'
+                    ]
+                }
+            );
+        }
+        this.webrtcProvider = webrtcProviderInstance;
 
         this.webrtcProvider.on('synced', () => {
             console.log('WebRTCProvider synced');
@@ -53,42 +50,26 @@ export default class Editor {
             console.log('Current peers:', peers);
         });
 
-        this.ytext = this.ydoc.getText('content');
+        this.awarenessManager = new AwarenessManager(
+            this.webrtcProvider.awareness, this.editorContent.contentEditor);
+
         this.savedIndicator = document.createElement('span');
         this.savedIndicator.textContent = 'Saved';
         this.savedIndicator.className = 'saved-indicator';
+        this.savedIndicator.textContent = 'Saved'; // Set initial state to 'Saved'
 
-        // Create a container for the metadata and toolbar
-        const headerContainer = document.createElement('div');
-        headerContainer.classList.add('editor-header');
-        headerContainer.appendChild(this.metadata.createMetadataPanel(this.object));
-        headerContainer.appendChild(this.toolbar.el);
+        const header = document.createElement('div');
+        header.classList.add('editor-header');
+        header.appendChild(this.metadata.createMetadataPanel(this.object));
+        header.appendChild(this.toolbar.el);
 
-        this.el.prepend(headerContainer);
+        this.el.prepend(header);
+        this.el.appendChild(this.editorContent.contentEditor)
         this.el.appendChild(this.savedIndicator);
 
-        this.ytext.insert(0, this.object.content ?? '');
-        this.contentEditor.innerHTML = this.ytext.toString(); // Use innerHTML for div
-
-        this.contentEditor.addEventListener('input', () => {
-            this.ytext.delete(0, this.ytext.length);
-            this.ytext.insert(0, this.contentEditor.innerHTML);
-            this.saveCurrentObject();
-        });
-
-
-        this.ytext.observe(async () => {
-            if (this.object.content !== this.ytext.toString()) {
-                this.savedIndicator.textContent = 'Saving...';
-                this.object.content = this.ytext.toString();
-                await DB.updateObject(this.object);
-                this.emitter.emit('objectUpdated');
-                this.saveCurrentObject(); // Call saveCurrentObject here as well
-                this.savedIndicator.textContent = 'Saved';
-            }
-        });
-
-        this.savedIndicator.textContent = 'Saved'; // Set initial state to 'Saved'
+        const CHANGED = () => this.saveCurrentObject();
+        this.metadata.nameInput.addEventListener('input', CHANGED);
+        this.editorContent.contentEditor.addEventListener('input', CHANGED);
     }
 
 
@@ -96,36 +77,24 @@ export default class Editor {
         const editorContainer = document.createElement('div');
         editorContainer.classList.add('editor-container');
 
-        // Create Yjs content element
-        this.contentEditor = document.createElement('yjs-content-element');
-        this.contentEditor.id = 'content-editor';
-        this.contentEditor.style.contentEditable = true;
-        editorContainer.appendChild(this.contentEditor);
-
         return editorContainer;
     }
 
 
-    saveCurrentObject() {
-        if (this.object) {
-            this.object.content = this.contentEditor.innerHTML;
-            this.object.tags = this.tagSelector.getTags();
-            if (this.config && this.config.db) {
-                DB.updateObject(this.object);
-            }
-        }
+    saveCurrentObject = () => {
+        this.object.name = this.metadata.nameInput.value;
+        this.object.content = this.editorContent.contentEditor.innerHTML;
+        this.object.tags = this.tagSelector.getTags();
+        DB.updateObject(this.object);
     }
-
 
     onUpdate(callback) {
         this.ytext.observe(callback);
     }
 
-
     formatText(format, value) {
         document.execCommand(format, false, value);
     }
-
 
     setBlockFormat(format) {
         switch (format) {
@@ -147,9 +116,13 @@ export default class Editor {
             default:
                 document.execCommand('formatBlock', false, format);
                 break;
+
         }
     }
 
+    getContentEditor() {
+        return this.contentEditor;
+    }
 
     applyFormat(command, value = undefined) {
         document.execCommand(command, false, value);

@@ -8,12 +8,14 @@ class MetadataManager {
         const metadataPanel = document.createElement('div');
         metadataPanel.classList.add('metadata-panel');
 
-        const titleInput = document.createElement('input');
-        titleInput.type = 'text';
-        titleInput.value = object.name;
-        titleInput.placeholder = 'Page Title';
-        titleInput.readOnly = this.isReadOnly;
-        metadataPanel.appendChild(titleInput);
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.value = object.name;
+        nameInput.placeholder = 'Page Title';
+        nameInput.readOnly = this.isReadOnly;
+        metadataPanel.appendChild(nameInput);
+
+        this.nameInput = nameInput;
 
 
         // Add metadata content based on the object here
@@ -34,9 +36,6 @@ class MetadataManager {
         // Implementation to be added later
     }
 
-    showToast(message) {
-        // Implementation to be added later
-    }
 }
 
 

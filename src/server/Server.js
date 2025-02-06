@@ -8,7 +8,7 @@ import {Server} from 'socket.io';
 import * as Y from 'yjs';
 import {LeveldbPersistence} from 'y-leveldb';
 import path from 'path';
-import {createNode} from './Net.LibP2P.js';
+import {createLibp2pNode, hybridBootstrap} from './Net.LibP2P.js';
 import {ServerPlugins} from './ServerPlugins.js';
 import Level from "level";
 import {createEd25519PeerId, createFromJSON} from "@libp2p/peer-id-factory";
@@ -18,19 +18,24 @@ const pluginManager = new ServerPlugins();
 const db = new Level('nobject-editor-leveldb', {valueEncoding: 'json'});
 
 export const getOrCreatePeerId = async () => {
-    const peerIdJson = await db.get('peerId').catch(() => null);
+    try {
+        const peerIdJson = await db.get('peerId').catch(() => null);
 
-    if (peerIdJson) {
-        console.log(`Using existing Peer ID from LevelDB: ${JSON.stringify(peerIdJson)}`);
-        return createFromJSON(peerIdJson);
+        if (peerIdJson) {
+            console.log(`Using existing Peer ID from LevelDB: ${JSON.stringify(peerIdJson)}`);
+            return createFromJSON(peerIdJson);
+        }
+
+        console.log('Creating and storing new Peer ID in LevelDB...');
+        const newPeerId = await createEd25519PeerId();
+        await db.put('peerId', newPeerId.toJSON());
+        console.log(`Peer ID: ${JSON.stringify(newPeerId.toJSON())}`);
+
+        return newPeerId;
+    } catch (error) {
+        console.error('Error getting or creating Peer ID:', error);
+        throw error;
     }
-
-    console.log('Creating and storing new Peer ID in LevelDB...');
-    const newPeerId = await createEd25519PeerId();
-    await db.put('peerId', newPeerId.toJSON());
-    console.log(`Peer ID: ${JSON.stringify(newPeerId.toJSON())}`);
-
-    return newPeerId;
 };
 
 
@@ -66,15 +71,14 @@ const io = new Server(server, {cors: {origin: '*', methods: ['GET', 'POST']}});
 
 (async () => {
     const ydoc = new Y.Doc();
-    await new LeveldbPersistence('./nobject-editor-leveldb');//.bindState('nobject-editor', ydoc);
+    const persistence = new LeveldbPersistence('./nobject-editor-leveldb');
     console.log('Y.Doc bound to LevelDB persistence');
 
     const peerId = await getOrCreatePeerId();
-    const node = await createNode(peerId, [
-        '/ip4/127.0.0.1/tcp/4001/ws/p2p/QmTFUXxRoKJgWkCyxs8hX5jCBrHzs67zGtffxLEpWq9p5P',
-        '/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3ER6ao5'
-    ]);
+    const node = await createLibp2pNode(peerId, db);
     console.log(`libp2p node started with id: ${node.peerId.toString()}`);
+
+    await hybridBootstrap(node, db, peerId)
 
     node.addEventListener('peer:discovery', ({detail}) => {
         console.log('Discovered', detail.id?.toString());
@@ -110,4 +114,3 @@ const io = new Server(server, {cors: {origin: '*', methods: ['GET', 'POST']}});
         : (process.env.PORT ?? 3001);
     server.listen(port, () => console.log(`Server running on port ${port}`));
 })();
-        

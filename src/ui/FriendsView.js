@@ -1,3 +1,6 @@
+/**
+ * View for displaying the friends list.
+ */
 export default class FriendsView {
     constructor() {
         this.el = document.createElement('div');
@@ -5,6 +8,9 @@ export default class FriendsView {
         this.el.textContent = 'Friends View (Placeholder)';
     }
 
+    /**
+     * Renders the friends view.
+     */
     render() {
         // Placeholder content
     }

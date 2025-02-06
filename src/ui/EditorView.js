@@ -1,5 +1,8 @@
 import Editor from './Editor.js';
 
+/**
+ * View for displaying the editor.
+ */
 export default class EditorView {
     constructor(objects, pluginManager, emitter) {
         this.el = document.createElement('div');
@@ -9,20 +12,26 @@ export default class EditorView {
         this.editor = null; // Store the editor instance
     }
 
+    /**
+     * Renders the editor view.
+     * @param {object} obj - The object to edit.
+     */
     render(obj) {
+        if (this.editor) {
+            //TODO deconstruct existing editor if different obj?
+        }
+
         this.el.innerHTML = ''; // Clear the container
 
         if (!obj) {
             this.el.textContent = 'No object selected.';
-            return;
+        } else {
+            this.editor = new Editor({
+                object: obj,
+                pluginManager: this.pluginManager,
+                emitter: this.emitter
+            });
+            this.el.appendChild(this.editor.el);
         }
-        this.editor = new Editor({
-            object: obj,
-            objects: this.objects,
-            pluginManager: this.pluginManager,
-            emitter: this.emitter
-        });
-        this.el.appendChild(this.editor.el);
-
     }
 }

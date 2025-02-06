@@ -1,19 +1,26 @@
+/**
+ * Editor toolbar component.
+ */
 export default class EditorToolbar {
-    constructor({onInsertSemantic, onSign, object, pluginManager}) {
+    constructor({onInsertSemantic}) {
         this.onInsertSemantic = onInsertSemantic;
-        this.onSign = onSign;
-        this.object = object;
-        this.pluginManager = pluginManager;
 
         this.el = document.createElement('div');
         this.el.className = 'editor-toolbar';
         this.buildToolbar();
     }
 
+    /**
+     * Returns the toolbar element.
+     * @returns {HTMLElement} The toolbar element.
+     */
     get element() {
         return this.el;
     }
 
+    /**
+     * Builds the toolbar.
+     */
     buildToolbar() {
         const createButton = (text, command) => {
             const button = document.createElement('button');
@@ -36,7 +43,7 @@ export default class EditorToolbar {
         `;
         insertMenu.addEventListener('change', () => {
             if (insertMenu.value) {
-                this.onInsertSemantic?.(this.object, insertMenu.value);
+                this.onInsertSemantic?.(insertMenu.value);
                 insertMenu.value = '';
             }
         });

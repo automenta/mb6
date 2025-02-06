@@ -1,11 +1,16 @@
+/**
+ * View for displaying the contents of the database.
+ */
 export default class DatabaseView {
     constructor(objects, pluginManager) {
         this.el = document.createElement('div');
         this.objects = objects;
         this.pluginManager = pluginManager;
-
     }
 
+    /**
+     * Renders the database view.
+     */
     render() {
         this.el.innerHTML = '';
 
@@ -16,13 +21,11 @@ export default class DatabaseView {
             return;
         }
 
-        const ul = this.el.appendChild(document.createElement('ul'));
+        const objectListElement = this.el.appendChild(document.createElement('ul'));
         objectList.map(obj => {
-            const li = document.createElement('li');
-            li.textContent = `Object ID: ${obj.id}, Content: ${obj.content}`;
-            return li;
-        }).forEach(li => ul.appendChild(li));
-
-
+            const listItemElement = document.createElement('li');
+            listItemElement.textContent = `Object ID: ${obj.id}, Name: ${obj.name}`;
+            return listItemElement;
+        }).forEach(listItemElement => objectListElement.appendChild(listItemElement));
     }
 }

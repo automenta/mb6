@@ -1,19 +1,60 @@
-import * as Y from 'yjs'
+import * as Yjs from 'yjs';
 import {IndexeddbPersistence} from 'y-indexeddb';
 
-const doc = new Y.Doc()
+const doc = new Yjs.Doc();
 const dbName = 'nobject-editor';
 const persistence = new IndexeddbPersistence(dbName, doc);
 
-persistence.on('synced', () => {});
+persistence.on('synced', () => {
+});
+
 export const addObjectToIndex = async (objectId) => {
-    const index = await persistence.get('objectIndex') || [];
-    index.push(objectId);
-    await persistence.set('objectIndex', index);
+    try {
+        const index = await persistence.get('objectIndex') || [];
+        index.push(objectId);
+        await persistence.set('objectIndex', index);
+    } catch (error) {
+        console.error('Error adding object to index:', error);
+    }
 };
 
 export default class DB {
-  
+
+    static getObjects = async () => {
+        try {
+            const index = await persistence.get('objectIndex') || [];
+            const objects = [];
+            for (const objectId of index) {
+                const obj = await persistence.get(objectId);
+                if (obj) {
+                    objects.push(obj);
+                }
+            }
+            return objects;
+        } catch (error) {
+            console.error('Error getting objects:', error);
+            return [];
+        }
+    }
+
+    static updateObject = async (object) => {
+        try {
+            await persistence.set(object.id, object);
+        } catch (error) {
+            console.error('Error updating object:', error);
+        }
+    }
+
+    static deleteObjectFromIndex = async (objectId) => {
+        try {
+            let index = await persistence.get('objectIndex') || [];
+            index = index.filter(id => id !== objectId);
+            await persistence.set('objectIndex', index);
+        } catch (error) {
+            console.error('Error deleting object from index:', error);
+        }
+    }
+
     /**
      * Merges two NObjects.
      * @param {NObject} obj1 - The first NObject.
@@ -25,7 +66,7 @@ export default class DB {
         const merged = new NObject({
             ...obj1,
             ...obj2,
-            content: Y.mergeUpdates(Y.encodeStateAsUpdate(obj1.content), Y.encodeStateAsUpdate(obj2.content)),
+            content: Yjs.mergeUpdates(Yjs.encodeStateAsUpdate(obj1.content), Yjs.encodeStateAsUpdate(obj2.content)),
             properties: {...obj1.properties, ...obj2.properties}
         });
 
@@ -40,28 +81,6 @@ export default class DB {
         await addObjectToIndex(merged.id);
 
         return merged;
-    }
-
-    static getObjects = async () => {
-        const index = await persistence.get('objectIndex') || [];
-        const objects = [];
-        for (const objectId of index) {
-            const obj = await persistence.get(objectId);
-            if (obj) {
-                objects.push(obj);
-            }
-        }
-        return objects;
-    }
-  
-    static updateObject = async (object) => {
-        await persistence.set(object.id, object);
-    }
-
-    static deleteObjectFromIndex = async (objectId) => {
-        let index = await persistence.get('objectIndex') || [];
-        index = index.filter(id => id !== objectId);
-        await persistence.set('objectIndex', index);
     }
 
 }

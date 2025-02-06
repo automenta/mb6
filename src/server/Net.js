@@ -11,178 +11,190 @@ import {nanoid} from 'nanoid';
 import {DHT} from 'bittorrent-dht';
 
 const dht = new DHT({
-  nodeId: crypto.randomBytes(20),
-  bootstrapNodes: [
-    { host: 'router.bittorrent.com', port: 6881 },
-    { host: 'dht.transmissionbt.com', port: 6881 }
-  ]
+    nodeId: crypto.randomBytes(20),
+    bootstrapNodes: [
+        {host: 'router.bittorrent.com', port: 6881},
+        {host: 'dht.transmissionbt.com', port: 6881}
+    ]
 });
 
 class Net {
-  constructor(doc) {
-    this.initP2PNetwork();
-    this.initSupernodeConnection();
-    this.setupPluginSystem();
-    
-    this.dht = dht;
-    this.dht.on('ready', () => this.onDHTReady());
-    
-    this.provider = new WebsocketProvider(
-      `ws://${import.meta.env.VITE_WEBSOCKET_HOST ?? 'localhost'}:${import.meta.env.VITE_WEBSOCKET_PORT ?? 3001}`,
-      'nobject-editor',
-      doc
-    );
-    this.awareness = this.provider.awareness;
-    this.initAwareness();
-  }
+    constructor(doc) {
+        this.initP2PNetwork();
+        this.initSupernodeConnection();
+        this.setupPluginSystem();
 
-  onDHTReady() {
-    this.dht.listen(6881, () => {
-      console.log('DHT listening on port 6881');
-    });
-  }
+        this.dht = dht;
+        this.dht.on('ready', () => this.onDHTReady());
 
-  initAwareness = () => {
-    this.awareness.setLocalStateField('user', {
-      name: `User-${nanoid(4)}`,
-      color: '#' + Math.floor(Math.random() * 16777215).toString(16)
-    });
-    this.awareness.on('change', () => console.log('Awareness update:', this.awareness.getStates()));
-  }
-
-  initP2PNetwork = () => {
-// WebRTC Signaling Server
-const signalingServer = new WebSocket('ws://localhost:3003');
-
-// Store active peer connections
-const peers = new Map();
-
-// Create and manage WebRTC peer connections
-const createPeerConnection = (peerId) => {
-  const peerConnection = new RTCPeerConnection({
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }
-    ]
-  });
-
-  // Create data channel for NObject communication
-  const dataChannel = peerConnection.createDataChannel('nobjects', {
-    ordered: true,
-    maxPacketLifeTime: 3000
-  });
-
-  // Handle ICE candidates
-  peerConnection.onicecandidate = ({candidate}) => {
-    if (candidate) {
-      signalingServer.send(JSON.stringify({
-        type: 'ice-candidate',
-        target: peerId,
-        candidate
-      }));
+        this.provider = new WebsocketProvider(
+            `ws://${import.meta.env.VITE_WEBSOCKET_HOST ?? 'localhost'}:${import.meta.env.VITE_WEBSOCKET_PORT ?? 3001}`,
+            'nobject-editor',
+            doc
+        );
+        this.awareness = this.provider.awareness;
+        this.initAwareness();
     }
-  };
 
-  // Handle incoming data
-  peerConnection.ondatachannel = ({channel}) => {
-    channel.onmessage = ({data}) => {
-      try {
-        const nobject = JSON.parse(data);
-        this.handleIncomingNObject(nobject);
-      } catch (error) {
-        console.error('Error parsing NObject:', error);
-      }
-    };
-  };
-
-  // Handle connection state changes
-  peerConnection.onconnectionstatechange = () => {
-    console.log(`Connection state with ${peerId}:`, peerConnection.connectionState);
-    if (peerConnection.connectionState === 'disconnected' ||
-        peerConnection.connectionState === 'failed') {
-      peers.delete(peerId);
+    onDHTReady() {
+        this.dht.listen(6881, () => {
+            console.log('DHT listening on port 6881');
+        });
     }
-  };
 
-  peers.set(peerId, {peerConnection, dataChannel});
-  return peerConnection;
-};
-
-// Handle signaling messages
-signalingServer.onmessage = async (event) => {
-  const message = JSON.parse(event.data);
-  switch (message.type) {
-    case 'offer':
-      await handleOffer(message);
-      break;
-    case 'answer':
-      await handleAnswer(message);
-      break;
-    case 'ice-candidate':
-      await handleIceCandidate(message);
-      break;
-    case 'new-peer':
-      handleNewPeer(message.peerId);
-      break;
-  }
-};
-
-const handleOffer = async ({peerId, offer}) => {
-  const peerConnection = createPeerConnection(peerId);
-  await peerConnection.setRemoteDescription(offer);
-  const answer = await peerConnection.createAnswer();
-  await peerConnection.setLocalDescription(answer);
-  signalingServer.send(JSON.stringify({
-    type: 'answer',
-    target: peerId,
-    answer
-  }));
-};
-
-const handleAnswer = async ({peerId, answer}) => {
-  const peer = peers.get(peerId);
-  if (peer) {
-    await peer.peerConnection.setRemoteDescription(answer);
-  }
-};
-
-const handleIceCandidate = async ({peerId, candidate}) => {
-  const peer = peers.get(peerId);
-  if (peer) {
-    await peer.peerConnection.addIceCandidate(candidate);
-  }
-};
-
-const handleNewPeer = (peerId) => {
-  if (!peers.has(peerId)) {
-    const peerConnection = createPeerConnection(peerId);
-    peerConnection.createOffer()
-      .then(offer => peerConnection.setLocalDescription(offer))
-      .then(() => {
-        signalingServer.send(JSON.stringify({
-          type: 'offer',
-          target: peerId,
-          offer: peerConnection.localDescription
-        }));
-      });
-  }
-};
-
-// Send NObject to all connected peers
-this.sendNObject = (nobject) => {
-  const data = JSON.stringify(nobject);
-  for (const [peerId, {dataChannel}] of peers) {
-    if (dataChannel.readyState === 'open') {
-      dataChannel.send(data);
+    initAwareness = () => {
+        this.awareness.setLocalStateField('user', {
+            name: `User-${nanoid(4)}`,
+            color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+        });
+        this.awareness.on('change', () => console.log('Awareness update:', this.awareness.getStates()));
     }
-  }
-};
 
-// Handle incoming NObjects
-this.handleIncomingNObject = (nobject) => {
-  // TODO: Implement NObject processing and synchronization
-  console.log('Received NObject:', nobject);
-};
+    initP2PNetwork = () => {
+        // WebRTC Signaling Server
+        const signalingServer = new WebSocket('ws://localhost:3003');
+
+        // Store active peer connections
+        const peers = new Map();
+
+        // Create and manage WebRTC peer connections
+        const createPeerConnection = (peerId) => {
+            const peerConnection = new RTCPeerConnection({
+                iceServers: [
+                    {urls: 'stun:stun.l.google.com:19302'},
+                    {urls: 'stun:global.stun.twilio.com:3478?transport=udp'}
+                ]
+            });
+
+            // Create data channel for NObject communication
+            const dataChannel = peerConnection.createDataChannel('nobjects', {
+                ordered: true,
+                maxPacketLifeTime: 3000
+            });
+
+            // Handle ICE candidates
+            peerConnection.onicecandidate = ({candidate}) => {
+                if (candidate) {
+                    signalingServer.send(JSON.stringify({
+                        type: 'ice-candidate',
+                        target: peerId,
+                        candidate
+                    }));
+                }
+            };
+
+            // Handle incoming data
+            peerConnection.ondatachannel = ({channel}) => {
+                channel.onmessage = ({data}) => {
+                    try {
+                        const nobject = JSON.parse(data);
+                        this.handleIncomingNObject(nobject);
+                    } catch (error) {
+                        console.error('Error parsing NObject:', error);
+                    }
+                };
+            };
+
+            // Handle connection state changes
+            peerConnection.onconnectionstatechange = () => {
+                console.log(`Connection state with ${peerId}:`, peerConnection.connectionState);
+                if (peerConnection.connectionState === 'disconnected' ||
+                    peerConnection.connectionState === 'failed') {
+                    peers.delete(peerId);
+                }
+            };
+
+            peers.set(peerId, {peerConnection, dataChannel});
+            return peerConnection;
+        };
+
+        // Handle signaling messages
+        signalingServer.onmessage = async (event) => {
+            const message = JSON.parse(event.data);
+            switch (message.type) {
+                case 'offer':
+                    await handleOffer(message);
+                    break;
+                case 'answer':
+                    await handleAnswer(message);
+                    break;
+                case 'ice-candidate':
+                    await handleIceCandidate(message);
+                    break;
+                case 'new-peer':
+                    handleNewPeer(message.peerId);
+                    break;
+            }
+        };
+
+        const handleOffer = async ({peerId, offer}) => {
+            try {
+                const peerConnection = createPeerConnection(peerId);
+                await peerConnection.setRemoteDescription(offer);
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                signalingServer.send(JSON.stringify({
+                    type: 'answer',
+                    target: peerId,
+                    answer
+                }));
+            } catch (error) {
+                console.error('Error handling offer:', error);
+            }
+        };
+
+        const handleAnswer = async ({peerId, answer}) => {
+            try {
+                const peer = peers.get(peerId);
+                if (peer) {
+                    await peer.peerConnection.setRemoteDescription(answer);
+                }
+            } catch (error) {
+                console.error('Error handling answer:', error);
+            }
+        };
+
+        const handleIceCandidate = async ({peerId, candidate}) => {
+            try {
+                const peer = peers.get(peerId);
+                if (peer) {
+                    await peer.peerConnection.addIceCandidate(candidate);
+                }
+            } catch (error) {
+                console.error('Error handling ICE candidate:', error);
+            }
+        };
+
+        const handleNewPeer = (peerId) => {
+            if (!peers.has(peerId)) {
+                const peerConnection = createPeerConnection(peerId);
+                peerConnection.createOffer()
+                    .then(offer => peerConnection.setLocalDescription(offer))
+                    .then(() => {
+                        signalingServer.send(JSON.stringify({
+                            type: 'offer',
+                            target: peerId,
+                            offer: peerConnection.localDescription
+                        }));
+                    });
+            }
+        };
+
+        // Send NObject to all connected peers
+        this.sendNObject = (nobject) => {
+            const data = JSON.stringify(nobject);
+            for (const [, {dataChannel}] of peers) {
+                if (dataChannel.readyState === 'open') {
+                    dataChannel.send(data);
+                }
+            }
+        };
+
+        // Handle incoming NObjects
+        this.handleIncomingNObject = (nobject) => {
+            // TODO: Implement NObject processing and synchronization
+            console.log('Received NObject:', nobject);
+        };
 
         // TODO: Implement WebRTC signaling and connection establishment for P2P.
         // - Use a signaling server (e.g., WebSocket) to exchange SDP offers/answers and ICE candidates.

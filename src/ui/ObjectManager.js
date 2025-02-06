@@ -1,5 +1,16 @@
-import NObjectFactory from '../core/NObjectFactory.js';
-import DB, { addObjectToIndex } from '../core/DB.js';
+import DB, {addObjectToIndex} from '../core/DB.js';
+import * as Yjs from "yjs";
+import {nanoid} from "nanoid";
+import NObject from "../core/NObject.js";
+
+
+function create(objects, pluginManager, name, content, tags = new Yjs.Map()) {
+    const id = nanoid();
+    const newObj = new NObject(id, name, content, tags);
+    objects.set(id, newObj);
+    pluginManager?.emit('objectCreated', newObj);
+    return newObj;
+}
 
 export default class ObjectManager {
 
@@ -24,12 +35,11 @@ export default class ObjectManager {
     };
 
     createNObject = (name, content, properties, tags) => {
-        const newNObject = NObjectFactory.create(this.objects, this.pluginManager, name, content, properties, tags);
+        const newNObject = create(this.objects, this.pluginManager, name, content, properties, tags);
         this.objects.set(newNObject.id, newNObject);
         addObjectToIndex(newNObject.id);
         this.renderObjects();
         return newNObject;
-
     };
 
     getNObject = id => this.objects.get(id);
@@ -43,8 +53,6 @@ export default class ObjectManager {
         this.emitter.emit('objectUpdated');
         this.renderObjects();
         return existingNObject;
-
-
     };
 
     deleteNObject = async id => {
@@ -55,9 +63,5 @@ export default class ObjectManager {
     };
 
     renderObjects = () => this.nObjectsView.render();
-
-
-
-    createObject = () => NObjectFactory.create(this.objects, this.pluginManager);
 
 }

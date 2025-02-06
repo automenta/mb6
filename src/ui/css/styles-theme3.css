@@ -23,9 +23,15 @@ body {
 }
 
 @keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0 50%;
+    }
 }
 
 /* Glitch Effect - Applied to the entire UI */
@@ -60,9 +66,15 @@ body {
 }
 
 @keyframes sidebarGlow {
-    0% { box-shadow: 0 0 10px var(--color-accent); }
-    50% { box-shadow: 0 0 20px var(--color-primary); }
-    100% { box-shadow: 0 0 10px var(--color-accent); }
+    0% {
+        box-shadow: 0 0 10px var(--color-accent);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--color-primary);
+    }
+    100% {
+        box-shadow: 0 0 10px var(--color-accent);
+    }
 }
 
 #main-view {
@@ -76,9 +88,15 @@ body {
 }
 
 @keyframes mainViewPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Typography */
@@ -90,9 +108,15 @@ h1, h2, h3 {
 }
 
 @keyframes textGlow {
-    0% { text-shadow: 0 0 15px var(--color-accent); }
-    50% { text-shadow: 0 0 25px var(--color-primary); }
-    100% { text-shadow: 0 0 15px var(--color-accent); }
+    0% {
+        text-shadow: 0 0 15px var(--color-accent);
+    }
+    50% {
+        text-shadow: 0 0 25px var(--color-primary);
+    }
+    100% {
+        text-shadow: 0 0 15px var(--color-accent);
+    }
 }
 
 /* Links */
@@ -104,14 +128,30 @@ a {
 }
 
 @keyframes rainbowText {
-    0% { color: red; }
-    14% { color: orange; }
-    28% { color: yellow; }
-    42% { color: green; }
-    57% { color: blue; }
-    71% { color: indigo; }
-    85% { color: violet; }
-    100% { color: red; }
+    0% {
+        color: red;
+    }
+    14% {
+        color: orange;
+    }
+    28% {
+        color: yellow;
+    }
+    42% {
+        color: green;
+    }
+    57% {
+        color: blue;
+    }
+    71% {
+        color: indigo;
+    }
+    85% {
+        color: violet;
+    }
+    100% {
+        color: red;
+    }
 }
 
 a:hover {
@@ -144,9 +184,15 @@ li {
 }
 
 @keyframes buttonPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .button:hover {
@@ -172,9 +218,15 @@ li {
 }
 
 @keyframes thumbnailGlow {
-    0% { box-shadow: 0 0 5px var(--color-secondary); }
-    50% { box-shadow: 0 0 15px var(--color-accent); }
-    100% { box-shadow: 0 0 5px var(--color-secondary); }
+    0% {
+        box-shadow: 0 0 5px var(--color-secondary);
+    }
+    50% {
+        box-shadow: 0 0 15px var(--color-accent);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--color-secondary);
+    }
 }
 
 .nobject-thumbnail:hover {
@@ -196,8 +248,12 @@ li {
 }
 
 @keyframes imageSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .nobject-thumbnail .name {
@@ -250,9 +306,15 @@ li {
 }
 
 @keyframes notificationGlow {
-    0% { box-shadow: 0 0 5px var(--color-accent); }
-    50% { box-shadow: 0 0 15px var(--color-secondary); }
-    100% { box-shadow: 0 0 5px var(--color-accent); }
+    0% {
+        box-shadow: 0 0 5px var(--color-accent);
+    }
+    50% {
+        box-shadow: 0 0 15px var(--color-secondary);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--color-accent);
+    }
 }
 
 /* Responsive Design */

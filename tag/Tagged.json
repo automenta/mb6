@@ -9,31 +9,49 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": {
+            "type": "string"
+          },
           "indefiniteForm": {
             "type": "object",
             "properties": {
-              "description": { "type": "string" },
-              "constraints": { "type": "object" }
+              "description": {
+                "type": "string"
+              },
+              "constraints": {
+                "type": "object"
+              }
             }
           },
           "definiteForm": {
             "type": "object",
             "properties": {
-              "description": { "type": "string" },
-              "schema": { "type": "object" }
+              "description": {
+                "type": "string"
+              },
+              "schema": {
+                "type": "object"
+              }
             }
           },
           "vectorWeights": {
             "type": "object",
-            "additionalProperties": { "type": "number" }
+            "additionalProperties": {
+              "type": "number"
+            }
           },
           "multilingual": {
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         },
-        "required": ["name", "indefiniteForm", "definiteForm"]
+        "required": [
+          "name",
+          "indefiniteForm",
+          "definiteForm"
+        ]
       }
     }
   },
@@ -42,8 +60,12 @@
       "type": "array",
       "items": {
         "oneOf": [
-          { "$ref": "#/hyperslices/interface" },
-          { "type": "string" }
+          {
+            "$ref": "#/hyperslices/interface"
+          },
+          {
+            "type": "string"
+          }
         ]
       }
     }

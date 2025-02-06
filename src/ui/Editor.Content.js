@@ -1,8 +1,11 @@
 import DB from '../core/DB.js';
+import {debounce} from './UIUtil.js';
 
+/**
+ * Editor for the content of an NObject.
+ */
 export default class EditorContent {
-    constructor({ydoc, ytext, object, onUpdate, pluginManager, emitter}) {
-        this.ydoc = ydoc;
+    constructor(ytext, object, onUpdate, pluginManager, emitter) {
         this.ytext = ytext;
         this.object = object;
         this.onUpdate = onUpdate;
@@ -10,11 +13,11 @@ export default class EditorContent {
         this.emitter = emitter;
 
         this.contentEditor = document.createElement('div');
-        this.contentEditor.className = 'content-editor';
+        this.contentEditor.el = 'content-editor';
         this.contentEditor.contentEditable = 'true';
-        this.contentEditor.innerHTML = this.object.content ?? '';
+        this.contentEditor.innerHTML = this.object?.content ?? '';
 
-        this.ytext.bind(this.contentEditor);
+        //this.ytext.bind(this.contentEditor);
 
         const updateContent = async () => {
             this.object.content = this.ytext.toString();
@@ -23,11 +26,10 @@ export default class EditorContent {
             this.emitter.emit('objectUpdated');
         };
 
-        this.contentEditor.addEventListener('input', updateContent);
-        this.ytext.observe(updateContent);
+        const debouncedUpdateContent = debounce(updateContent, 300);
+
+        this.contentEditor.addEventListener('input', debouncedUpdateContent);
+        this.ytext.observe(debouncedUpdateContent);
     }
-    
-    get element() {
-        return this.contentEditor;
-    }
+
 }

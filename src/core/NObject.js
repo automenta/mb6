@@ -1,6 +1,9 @@
 import {nanoid} from 'nanoid';
 import EventEmitter from 'events';
+import * as Yjs from 'yjs';
 import TagRegistry from './TagRegistry';
+import NotificationQueue from './NotificationQueue';
+
 
 /**
  * Represents a shared object in the Collaborative Reality Editor.
@@ -12,43 +15,32 @@ class NObject extends EventEmitter {
     name;
     content;
     tags;
+    metadata;
 
-    constructor(id, name, content, tags = new Y.Map()) {
+    constructor(id, name, content, tags) {
+        super();
         this.id = id;
         this.name = name;
-        this.content = typeof content === 'string' ? new Y.Text(content) : content;
-        this.tags = tags instanceof Y.Map ? tags : new Y.Map(tags);
-        
+        this.content = typeof content === 'string' ? new Yjs.Text(content) : content;
+        this.tags = tags instanceof Yjs.Map ? tags : new Yjs.Map(tags);
+
         // Enable CRDT synchronization for tags
         this.tags.observeDeep(() => this._onChange());
-        if (this.content instanceof Y.Text) {
+        if (this.content instanceof Yjs.Text) {
             this.content.observe(() => this._onChange());
         }
     }
 
     get indefiniteTags() {
-        return Object.fromEntries(Object.entries(this.tags).filter(([, value]) => this.isIndefinite(value)));
+        return Object.fromEntries(
+            Object.entries(this.tags.toJSON()).filter(([, value]) => this.isIndefinite(value))
+        );
     }
 
     get definiteTags() {
-        return Object.fromEntries(Object.entries(this.tags).filter(([, value]) => !this.isIndefinite(value)));
-    }
-
-    /**
-     * Adds a tag to the NObject (stored as property with 'tag:' prefix)
-     * @param {string} tag - The semantic tag to add
-     */
-    addTag(tag, value = true, isIndefinite = false) {
-        if (isIndefinite) {
-            this.tags.set(`indef:${tag}`, {
-                __indefinite: true,
-                criteria: value,
-                created: Date.now()
-            });
-        } else {
-            this.tags.delete(`indef:${tag}`);
-            this.tags.set(tag, value);
-        }
+        return Object.fromEntries(
+            Object.entries(this.tags.toJSON()).filter(([, value]) => !this.isIndefinite(value))
+        );
     }
 
     /**
@@ -56,6 +48,19 @@ class NObject extends EventEmitter {
      */
     get tagsList() {
         return Array.from(this.tags.keys());
+    }
+
+    addTag(tag, value = true, isIndefinite = false) {
+        const key = isIndefinite ? `indef:${tag}` : tag;
+        const val = isIndefinite ? {
+            __indefinite: true,
+            criteria: value,
+            created: Date.now()
+        } : value;
+        this.tags.set(key, val);
+        if (!isIndefinite) {
+            this.tags.delete(`indef:${tag}`);
+        }
     }
 
     /**
@@ -73,14 +78,14 @@ class NObject extends EventEmitter {
      */
     merge(other) {
         // Create merged document using CRDT merge strategy
-        const mergedDoc = new Y.Doc();
-        Y.applyUpdate(mergedDoc, Y.mergeUpdates([
-            Y.encodeStateAsUpdate(this.doc),
-            Y.encodeStateAsUpdate(other.doc)
+        const mergedDoc = new Yjs.Doc();
+        Yjs.applyUpdate(mergedDoc, Yjs.mergeUpdates([
+            Yjs.encodeStateAsUpdate(this.content),
+            Yjs.encodeStateAsUpdate(other.content)
         ]));
 
         // Tags are now handled through properties merge
-        
+
         // Preserve metadata from both versions
         const mergedMetadata = {
             ...this.metadata,
@@ -99,16 +104,17 @@ class NObject extends EventEmitter {
             mergedDoc.getText('content'),
             mergedDoc.getMap('tags')
         );
-        
+
         // Apply merged metadata
         merged.metadata = mergedMetadata;
-        
+
         return merged;
     }
+
     getContentType() {
-        if (this.content instanceof Y.Text) return 'text';
-        if (this.content instanceof Y.Map) return 'map';
-        if (this.content instanceof Y.Array) return 'array';
+        if (this.content instanceof Yjs.Text) return 'text';
+        if (this.content instanceof Yjs.Map) return 'map';
+        if (this.content instanceof Yjs.Array) return 'array';
         return 'unknown';
     }
 
@@ -120,28 +126,27 @@ class NObject extends EventEmitter {
     matchAgainst(candidate) {
         // Only indefinite objects can perform matching
         if (!this.isIndefinite()) return 0;
-        
+
         let score = 0;
-        const totalWeights = Object.keys(this.indefiniteProperties).length;
         const tagRelationships = TagRegistry.getHyperslicedRelationships(this.tagsList);
-        
+
         // Compare using hypersliced interfaces
-        for (const [interfaceName, { weights, matcher }] of Object.entries(tagRelationships)) {
+        for (const [interfaceName, {weights, matcher}] of Object.entries(tagRelationships)) {
             const interfaceScore = matcher(this, candidate);
             score += interfaceScore * weights[interfaceName] || 1;
         }
-        
+
         // Semantic vector matching
         const semanticScore = TagRegistry.semanticSimilarity(
             this.semanticVector(),
             candidate.semanticVector()
         );
-        
+
         const finalScore = Math.min(1,
             (score * 0.6) + // Hypersliced interface matches
             (semanticScore * 0.4) // Semantic similarity
         );
-        
+
         // Threshold-based notification with cooldown
         if (finalScore > TagRegistry.config.matchThreshold) {
             const matchData = {
@@ -150,20 +155,20 @@ class NObject extends EventEmitter {
                 matchedInterfaces: Object.keys(tagRelationships),
                 timestamp: Date.now()
             };
-            
-            this.resolveMatch(candidate, matchedInterfaces);
+
+            this.resolveMatch(candidate);
             this.emit('match', matchData);
             NotificationQueue.add(matchData);
         }
-        
+
         return finalScore;
     }
 
-    semanticVector() {
+    /*semanticVector() {
         return this.tagsList
             .map(tag => TagRegistry.getVectorEmbedding(tag))
             .reduce((acc, vec) => acc.add(vec), new Vector());
-    }
+    }*/
 
     /**
      * Validate tags against hypersliced schemas
@@ -177,7 +182,7 @@ class NObject extends EventEmitter {
                 errors.push(`Missing schema for tag: ${tag}`);
                 continue;
             }
-            
+
             try {
                 schema.validate(this.definiteTags);
             } catch (e) {
@@ -190,7 +195,7 @@ class NObject extends EventEmitter {
     _onChange() {
         // Emit change event for synchronization
         this.emit('change', this);
-        
+
         // Auto-validate tags on change
         const errors = this.validateTags();
         if (errors.length > 0) {
@@ -198,6 +203,9 @@ class NObject extends EventEmitter {
         }
     }
 
+    resolveMatch(candidate, matchedInterfaces) {
+        // This method is intentionally left blank
+    }
 }
 
 export default NObject;
