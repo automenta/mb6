@@ -5,7 +5,7 @@ import {createServer} from 'http';
 // TODO: Implement WebSocket connection for UI client and additional functionality (README.md line 97)
 import {Server} from 'socket.io';
 // TODO: Implement plugins for input (screenshots, etc.) and analysis (OCR, etc.) (README.md line 98)
-import * as Y from 'yjs';
+import * as Yjs from 'yjs';
 import {LeveldbPersistence} from 'y-leveldb';
 import path from 'path';
 import {createLibp2pNode, hybridBootstrap} from './Net.LibP2P.js';

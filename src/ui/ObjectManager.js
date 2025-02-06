@@ -1,7 +1,8 @@
 import DB, {addObjectToIndex} from '../core/DB.js';
 import * as Yjs from "yjs";
-import {nanoid} from "nanoid";
+import {nanoid} from 'nanoid';
 import NObject from "../core/NObject.js";
+
 
 
 function create(objects, pluginManager, name, content, tags = new Yjs.Map()) {
@@ -34,8 +35,8 @@ export default class ObjectManager {
 
     };
 
-    createNObject = (name, content, properties, tags) => {
-        const newNObject = create(this.objects, this.pluginManager, name, content, properties, tags);
+    createNObject = (name, content, tags) => {
+        const newNObject = create(this.objects, this.pluginManager, name, content, tags);
         this.objects.set(newNObject.id, newNObject);
         addObjectToIndex(newNObject.id);
         this.renderObjects();

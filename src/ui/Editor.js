@@ -1,5 +1,5 @@
 import {WebrtcProvider} from 'y-webrtc';
-import * as Y from 'yjs';
+import * as Yjs from 'yjs';
 import DB from '../core/DB.js';
 import EditorContent from './Editor.Content.js';
 import EditorToolbar from './Editor.Toolbar.js';

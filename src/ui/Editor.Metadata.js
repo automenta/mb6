@@ -1,7 +1,7 @@
 /**
  * Editor for the metadata of an NObject.
  */
-import * as Y from 'yjs';
+import * as Yjs from 'yjs';
 import {DOMBinding} from '@yjs/dom';
 
 export default class EditorMetadata {
