@@ -1,6 +1,9 @@
 import './css/styles-theme2.css'
 import { MainView } from './MainView.js'
 import { HomeView } from './HomeView.js'
+import MeView from './MeView.js';
+import FriendsView from './FriendsView.js';
+import NetworkView from './NetworkView.js';
 import NObjectsView from './NObjectsView.js'
 import EditorView from './EditorView.js'
 import DatabaseView from './DatabaseView.js'
@@ -28,6 +31,9 @@ export class App {
         this.mainView = new MainView();
         this.views = {
             home: new HomeView(this.objects, this.pluginManager, this.notifications),
+            me: new MeView(),
+            friends: new FriendsView(),
+            network: new NetworkView(),
             nObjects: new NObjectsView(this.objects, this.pluginManager),
             database: new DatabaseView(this.objects, this.pluginManager),
             editor: new EditorView(this.objects, this.pluginManager, this.emitter),

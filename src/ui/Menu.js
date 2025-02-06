@@ -7,15 +7,15 @@ export default class Menu {
         el.id = 'menu';
         el.className = 'menu'; // Add menu class
         el.innerHTML = `
-            <button id="create-nobject" class="menu-button">+</button>
-            <select id="view-selector">
-                <option value="#me" data-navigo>Me</option>
-                <option value="#friends" data-navigo>Friends</option>
-                <option value="#network" data-navigo>Network</option>
-                <option value="#notifications" data-navigo>Notifications</option>
-                <option value="#database" data-navigo>Database</option>
-                <option value="#settings" data-navigo>Settings</option>
-            </select>
+                    <button id="create-nobject" class="menu-button">+</button>
+                    <ul>
+                        <li><a href="#me" data-navigo>Me</a></li>
+                        <li><a href="#friends" data-navigo>Friends</a></li>
+                        <li><a href="#network" data-navigo>Network</a></li>
+                        <li><a href="#notifications" data-navigo>Notifications</a></li>
+                        <li><a href="#database" data-navigo>Database</a></li>
+                        <li><a href="#settings" data-navigo>Settings</a></li>
+                    </ul>
 
         `;
 

@@ -10,20 +10,18 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
     - Collaboratively create, prioritize, and manage data.
     - Represent thoughts and ideas, evolving into tangible, matched results.
     - Private unless explicitly shared.
-    - **Properties**
-        - **Indefinite:** Describe a hypothetical object, representing a desired state or criteria for a match, and can
-          be refined over time.
+    - **Tags**
+        - **Indefinite:** Describe a hypothetical object, representing a desired state or criteria for a match.
         - **Definite:** Describe the actual characteristics of a real object.
 
 ### Search and Match
 
 - **Persistent Queries**
-    - `NObject`s act as ongoing search interests.
-    - Indefinite properties form these persistent queries.
+    - `NObject`s with indefinite tags act as persistent search queries.
 - **Semantic Matching**
     - `NObject`s capture meaning and intent, acting as implicit goals.
-    - Hypothetical objects (defined by indefinite properties) gradually become real as matches are found and definite
-      properties are assigned.
+    - Hypothetical objects (defined by indefinite tags) gradually become real as matches are found and definite
+      tags are assigned.
     - Reflects the evolution of a thought or idea into a concrete result.
 - **Tags**
     - Descriptive, `NObject`-typed tags (suggested by schemas).
@@ -51,14 +49,21 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
 
 - **Main View**
     - Unified interface for viewing, creating, and editing `NObject`s.
-- **Sidebar Navigation**
-    - Provides access to:
-        - User profiles ("Me")
-        - Connection updates ("Friends")
-        - Network activity ("Network")
-        - Sortable/filterable data views ("Database")
-- **Dark Mode**
-    - Supported for visual comfort.
+- **Menu**
+    - User profiles ("Me")
+    - Connection updates ("Friends")
+    - Network activity ("Network")
+    - Sortable/filterable data views ("Database")
+- **Sidebar**
+    - Lists:
+        - My Recent Objects
+        - My Matches
+        - Friends
+        - Friend's Objects
+        - Incoming (public, from network)
+        - etc...
+- **Theme select + Dark Mode**
+    - CSS style switch, and optional dark mode
 
 ## Design
 

@@ -21,9 +21,11 @@
     "@libp2p/tcp": "latest",
     "@libp2p/webrtc-star": "latest",
     "@libp2p/websockets": "latest",
+    "bittorrent-dht": "latest",
     "express": "latest",
     "level": "latest",
     "libp2p": "latest",
+    "libp2p-kad-dht": "latest",
     "nanoid": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
@@ -31,10 +33,9 @@
     "y-indexeddb": "latest",
     "y-leveldb": "latest",
     "y-protocols": "latest",
+    "y-webrtc": "^10.3.0",
     "y-websocket": "latest",
-    "yjs": "latest",
-    "bittorrent-dht": "latest",
-    "libp2p-kad-dht": "latest"
+    "yjs": "latest"
   },
   "devDependencies": {
     "@types/express": "latest",

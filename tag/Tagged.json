@@ -1,8 +1,51 @@
 {
-  "tags": {
-    "type": "array",
-    "items": {
-      "type": "string"
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hypersliced Tag Interface",
+  "description": "Defines hypersliced tag interfaces for semantic matching",
+  "type": "object",
+  "hyperslices": {
+    "interface": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "indefiniteForm": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "constraints": { "type": "object" }
+            }
+          },
+          "definiteForm": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "schema": { "type": "object" }
+            }
+          },
+          "vectorWeights": {
+            "type": "object",
+            "additionalProperties": { "type": "number" }
+          },
+          "multilingual": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        },
+        "required": ["name", "indefiniteForm", "definiteForm"]
+      }
+    }
+  },
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/hyperslices/interface" },
+          { "type": "string" }
+        ]
+      }
     }
   }
 }

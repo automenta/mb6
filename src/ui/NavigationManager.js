@@ -5,6 +5,9 @@ export default class NavigationManager {
 
         this.routes = {
             '#home': 'home',
+            '#me': 'me',
+            '#friends': 'friends',
+            '#network': 'network',
             '#nObjects': 'nObjects',
             '#database': 'database',
             '#settings': 'settings',

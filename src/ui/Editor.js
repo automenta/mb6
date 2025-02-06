@@ -1,4 +1,5 @@
 import * as Y from 'yjs';
+import { WebrtcProvider } from 'y-webrtc';
 import DB from '../core/DB.js';
 import EditorToolbar from './Editor.Toolbar.js';
 //import EditorMetadata from './Editor.Metadata.js';
@@ -32,6 +33,25 @@ export default class Editor {
         this.metadata = new MetadataManager(false); // Placeholder for isReadOnly
         this.tagSelector = new TagSelector(this.el, '');
         this.awarenessManager = new AwarenessManager(new Awareness(ydoc), this.contentEditor);
+        // Initialize WebrtcProvider
+        this.webrtcProvider = new WebrtcProvider(
+            'nobject-editor-room', // room name
+            this.ydoc,
+            {
+                signaling: [
+                    'wss://signaling.yjs.dev',
+                    'ws://localhost:4444'
+                ]
+            }
+        );
+
+        this.webrtcProvider.on('synced', () => {
+            console.log('WebRTCProvider synced');
+        });
+
+        this.webrtcProvider.on('peers', peers => {
+            console.log('Current peers:', peers);
+        });
 
         this.ytext = this.ydoc.getText('content');
         this.savedIndicator = document.createElement('span');
