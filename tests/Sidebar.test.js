@@ -1,5 +1,5 @@
 import { expect, test, describe, vi } from 'vitest';
-import Sidebar from './Sidebar.js';
+import Sidebar from '../src/ui/Sidebar.js';
 import { EventEmitter } from 'events';
 
 describe('Sidebar', () => {

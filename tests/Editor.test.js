@@ -1,13 +1,7 @@
 import { expect, test, describe, vi } from 'vitest';
-import Editor from './Editor.js';
-import { NObject } from '../core/NObject';
-import EditorContent from './Editor.Content.js'; // Import EditorContent
+import Editor from '../src/ui/Editor.js';
+import EditorContent from '../src/ui/Editor.Content.js'; // Import EditorContent
 
-vi.mock('@yjs/dom', () => ({
-  DOMBinding: vi.fn(() => ({
-    destroy: vi.fn(),
-  })),
-}));
 
 vi.mock('./UIUtil', () => {
   return {

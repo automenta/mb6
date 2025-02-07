@@ -1,9 +1,8 @@
 import {nanoid} from 'nanoid';
 import EventEmitter from 'events';
-import * as Yjs from 'yjs';
+import * as Y from 'yjs';
 import TagRegistry from './TagRegistry';
 import NotificationQueue from './NotificationQueue';
-
 
 /**
  * Represents a shared object in the Collaborative Reality Editor.
@@ -24,15 +23,23 @@ class NObject extends EventEmitter {
         super();
         this.id = id;
         this.name = name;
-        this.content = typeof content === 'string' ? new Yjs.Text(content) : content;
-        this.tags = tags instanceof Yjs.Map ? tags : new Yjs.Map(tags);
+        this.content = typeof content === 'string' ? new Y.Text(content) : content;
+        // Handle different types of tags input
+        if (tags instanceof Y.Map) {
+            this.tags = tags;
+        } else if (typeof tags === 'object' && tags !== null) {
+            // Convert plain object to Map entries
+            this.tags = new Y.Map(Object.entries(tags));
+        } else {
+            this.tags = new Y.Map();
+        }
         this.author = author;
         this.created = created || Date.now();
         this.updated = updated || Date.now();
 
         // Enable CRDT synchronization for tags
         this.tags.observeDeep(() => this._onChange());
-        if (this.content instanceof Yjs.Text) {
+        if (this.content instanceof Y.Text) {
             this.content.observe(() => this._onChange());
         }
     }
@@ -84,10 +91,10 @@ class NObject extends EventEmitter {
      */
     merge(other) {
         // Create merged document using CRDT merge strategy
-        const mergedDoc = new Yjs.Doc();
-        Yjs.applyUpdate(mergedDoc, Yjs.mergeUpdates([
-            Yjs.encodeStateAsUpdate(this.content),
-            Yjs.encodeStateAsUpdate(other.content)
+        const mergedDoc = new Y.Doc();
+        Y.applyUpdate(mergedDoc, Y.mergeUpdates([
+            Y.encodeStateAsUpdate(this.content),
+            Y.encodeStateAsUpdate(other.content)
         ]));
 
         // Tags are now handled through properties merge
@@ -118,9 +125,9 @@ class NObject extends EventEmitter {
     }
 
     getContentType() {
-        if (this.content instanceof Yjs.Text) return 'text';
-        if (this.content instanceof Yjs.Map) return 'map';
-        if (this.content instanceof Yjs.Array) return 'array';
+        if (this.content instanceof Y.Text) return 'text';
+        if (this.content instanceof Y.Map) return 'map';
+        if (this.content instanceof Y.Array) return 'array';
         return 'unknown';
     }
 

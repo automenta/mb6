@@ -47,6 +47,10 @@ export class App {
         this.setContentView('nObjects'); // Updates the NObjects view after deleting an object
     }
 
+    setContentView(view, obj) {
+        this.layoutManager.mainView.setContentView(this.layoutManager.views[view], obj);
+    }
+
     render() {
         const appElement = document.getElementById('app');
         if (appElement) {
