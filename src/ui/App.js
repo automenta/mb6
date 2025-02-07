@@ -1,21 +1,29 @@
-import {UIPlugins} from './UIPlugins.js'
-import Notifier from './Notifier.js'
-import {EventEmitter} from 'events'
-import LayoutManager from './LayoutManager.js'
-import ObjectManager from './ObjectManager.js'
-import NavigationManager from './NavigationManager.js'
+import { EventEmitter } from 'events';
+import LayoutManager from './LayoutManager.js';
+import Notifier from './Notifier.js'; // Ensure Notifier is imported
+import ObjectManager from './ObjectManager.js';
 
 export class App {
-    constructor({ emitter, pluginManager, notifier } = {}) {
-        this.emitter = emitter || new EventEmitter();
-        this.managers = {};
-        this.pluginManager = pluginManager || new UIPlugins();
-        this.notifier = notifier || new Notifier();
-        this.navigationManager = new NavigationManager();
-        this.managers.navigationManager = this.navigationManager;
+    constructor(objectManager, layoutManager, notifier) {
+        this.emitter = new EventEmitter();
         this.objects = new Map();
-        this.objectManager = new ObjectManager(this.objects, this.pluginManager, null, this.emitter);
-        this.layoutManager = new LayoutManager({...this, objects: this.objects});
+        this.objectManager = objectManager;
+        this.notifier = notifier; // Initialize notifier
+        this.managers = {
+            objectManager: this.objectManager
+        };
+        this.layoutManager = layoutManager;
+
+        this.routes = {
+            '#home': 'home',
+            '#me': 'me',
+            '#friends': 'friends',
+            '#network': 'network',
+            '#nObjects': 'nObjects',
+            '#database': 'database',
+            '#settings': 'settings',
+            '': 'home' // Default to home view
+        };
     }
 
     applyStylesheet(filename) {
@@ -28,7 +36,7 @@ export class App {
 
     createNObject(name, content, properties, tags) {
         const newNObject = this.objectManager.createNObject(name, content, properties, tags);
-        this.setContentView('nObjects', newNObject); // Updates the NObjects view after creating a new object
+        this.layoutManager.setMessageView('nObjects', newNObject); // Updates the NObjects view after creating a new object
         return newNObject;
     }
 
@@ -38,29 +46,49 @@ export class App {
 
     updateNObject(id, updates) {
         const updatedNObject = this.objectManager.updateNObject(id, updates);
-        this.setContentView('nObjects', updatedNObject); // Updates the NObjects view after updating an object
+        this.layoutManager.setMessageView('nObjects', updatedNObject); // Updates the NObjects view after updating an object
         return updatedNObject;
     }
 
     deleteNObject(id) {
         this.objectManager.deleteNObject(id);
-        this.setContentView('nObjects'); // Updates the NObjects view after deleting an object
+        this.layoutManager.setMessageView('nObjects', ''); // Updates the NObjects view after deleting an object
     }
 
-    setContentView(view, obj) {
-        this.layoutManager.mainView.setContentView(this.layoutManager.views[view], obj);
-    }
+    getObjectIdFromRoute = route => (route.match(/#editor\/(.*)/) || [])[1];
+
+    handleNavigation = route => {
+        let viewName = this.routes[route] || this.routes[''];
+        let obj = null;
+
+        if (route.startsWith('#editor/')) {
+            viewName = 'editor';
+            const objectId = this.getObjectIdFromRoute(route);
+            obj = objectId && this.objectManager.getNObject(objectId);
+        }
+
+        this.layoutManager.mainView.setContentView(this.layoutManager.views[viewName], obj);
+
+    };
 
     render() {
         const appElement = document.getElementById('app');
         if (appElement) {
-            appElement.appendChild(this.layoutManager.mainView.el);
+            this.layoutManager.initialize(appElement);
+            this.handleNavigation(window.location.hash);
         } else {
             console.error('App element not found');
         }
     }
-
 }
 
-const app = new App();
+const objects = new Map();
+const emitter = new EventEmitter();
+const objectManager = new ObjectManager(objects, emitter);
+const notifier = new Notifier(); // Initialize notifier
+
+const app = new App(objectManager, null, notifier);
+const layoutManager = new LayoutManager({ app: app, objects: objects }); // Pass null for now, will be updated later
+app.layoutManager = layoutManager;
+
 app.render();

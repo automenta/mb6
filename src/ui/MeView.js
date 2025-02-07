@@ -1,3 +1,4 @@
+/** View for displaying the "Me" page. */
 export default class MeView {
     constructor(objects, pluginManager, emitter) {
         this.el = document.createElement('div');
@@ -6,6 +7,9 @@ export default class MeView {
     }
 
     render() {
-        // Placeholder content
+        this.el.innerHTML = '';
+        const placeholder = document.createElement('div');
+        placeholder.innerText = 'Welcome to the Me Page!';
+        this.el.appendChild(placeholder);
     }
 }

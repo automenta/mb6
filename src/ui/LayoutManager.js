@@ -4,26 +4,23 @@ import { HomeView } from './HomeView.js';
 import MeView from './MeView.js';
 import FriendsView from './FriendsView.js';
 import NetworkView from './NetworkView.js';
-import NObjectsView from "./NObjectsView.js";
-import DatabaseView from "./DatabaseView.js";
-import EditorView from "./EditorView.js";
-import SettingsView from "./SettingsView.js";
-import NotificationManager from "./NotificationManager.js";
-import NavigationManager from "./NavigationManager.js";
+import NObjectsView from './NObjectsView.js';
+import DatabaseView from './DatabaseView.js';
+import EditorView from './EditorView.js';
+import SettingsView from './SettingsView.js';
+import NotificationManager from './NotificationManager.js';
 
-import './css/styles-theme2.css'
-
+import './css/styles-theme2.css';
 
 export default class LayoutManager {
-    constructor(options) {
-        this.app = options;
-        this.objects = options.objects;
-        this.notifier = options.notifier;
-        this.emitter = options.emitter;
+    constructor({ app, objects }) {
+        this.app = app;
+        this.objects = objects;
+        this.notifier = app.notifier;
+        this.emitter = app.emitter;
         this.views = {};
-        this.managers = {};
+        this.managers = app.managers;
         this.mainView = new MainView();
-        this.navigationManager = this.app.managers.navigationManager;
         this.sidebar = new Sidebar({
             objects: this.objects,
             notifier: this.notifier,
@@ -32,13 +29,17 @@ export default class LayoutManager {
                 this.handleNavigation(route);
             }
         });
-        this.initialize();
     }
 
-    initialize() {
+    initialize(appElement) {
         this.initializeViews();
-        this.initializeManagers();
         this.setupEventListeners();
+        if (appElement) {
+            appElement.appendChild(this.sidebar.el);
+            appElement.appendChild(this.mainView.el);
+        } else {
+            console.error('App element not found');
+        }
     }
 
     initializeViews() {
@@ -49,26 +50,20 @@ export default class LayoutManager {
             network: new NetworkView(),
             nObjects: new NObjectsView(this.app.objects),
             database: new DatabaseView(this.app.objects, []),
-            editor: new EditorView({object: this.app.objects, emitter: this.app.emitter}),
-            settings: new SettingsView({applyStylesheet: filename => this.app.applyStylesheet(filename)})
+            editor: new EditorView({ object: this.app.objects, emitter: this.app.emitter }),
+            settings: new SettingsView({ applyStylesheet: filename => this.app.applyStylesheet(filename) })
         };
-    }
-
-    initializeManagers() {
-        this.managers.notificationManager = new NotificationManager([], this.app.mainView, this.app.notifier);
-        this.managers.navigationManager = new NavigationManager(this.app, this.views);
     }
 
     setupEventListeners() {
         this.sidebar.el.addEventListener('click', (e) => {
             if (e.target.dataset.navigate) {
-                this.managers.navigationManager.handleNavigation(e.target.dataset.navigate);
+                this.handleNavigation(e.target.dataset.navigate);
             }
         });
     }
 
     handleNavigation(route) {
-        this.navigationManager.handleNavigation(route);
+        this.app.handleNavigation(route);
     }
-
 }

@@ -17,7 +17,13 @@ export class HomeView {
      */
     render() {
         this.el.innerHTML = '';
-        this.notificationView.render(this.notifications);
-        this.el.appendChild(this.notificationView.element);
+        if (this.notifications && this.notifications.length > 0) {
+            this.notificationView.render(this.notifications);
+            this.el.appendChild(this.notificationView.element);
+        } else {
+            const placeholder = document.createElement('div');
+            placeholder.innerText = 'Welcome to the Home Page!';
+            this.el.appendChild(placeholder);
+        }
     }
 }

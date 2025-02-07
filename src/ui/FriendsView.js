@@ -1,6 +1,4 @@
-/**
- * View for displaying the friends list.
- */
+/** View for displaying the "Friends" page. */
 export default class FriendsView {
     constructor() {
         this.el = document.createElement('div');
@@ -8,10 +6,10 @@ export default class FriendsView {
         this.el.textContent = 'Friends View (Placeholder)';
     }
 
-    /**
-     * Renders the friends view.
-     */
     render() {
-        // Placeholder content
+        this.el.innerHTML = '';
+        const placeholder = document.createElement('div');
+        placeholder.innerText = 'Welcome to the Friends Page!';
+        this.el.appendChild(placeholder);
     }
 }
