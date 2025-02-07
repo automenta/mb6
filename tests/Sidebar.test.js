@@ -5,9 +5,12 @@ import { EventEmitter } from 'events';
 describe('Sidebar', () => {
   const mockOnNavigate = vi.fn();
   const mockObjects = new Map();
-  const mockNotifier = { 
+  const mockNotifier = {
+    listeners: {},
     addNotification: vi.fn(),
-    on: vi.fn()
+    on: (event, listener) => {
+      (mockNotifier.listeners[event] || (mockNotifier.listeners[event] = [])).push(listener);
+    }
   };
   const mockUIManager = {};
   const emitter = new EventEmitter();

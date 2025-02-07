@@ -32,7 +32,9 @@ describe('Editor', () => {
   const mockObject = { id: '1', name: 'Test Object', content: 'Test Content', tags: [] };
 
   test('Editor can be instantiated', () => {
-    const editor = new Editor({object: mockObject});
+    const mockWebrtc = { awareness: {} };
+    const mockApp = { webrtc: mockWebrtc };
+    const editor = new Editor({ object: mockObject, app: mockApp });
     expect(editor).toBeInstanceOf(Editor);
   });
 

@@ -8,7 +8,6 @@ export default class EditorMetadata {
 
         this.ydoc = new Yjs.Doc();
         this.ytextName = this.ydoc.getText('name');
-        this.ytextDescription = this.ydoc.getText('description');
         this.ytextTags = this.ydoc.getText('tags');
 
         this.el = document.createElement('div');
@@ -22,12 +21,6 @@ export default class EditorMetadata {
 
         const bindingName = new DOMBinding(this.ytextName, this.nameInput);
 
-        this.descriptionInput = document.createElement('textarea');
-        this.descriptionInput.className = 'description-input';
-        this.descriptionInput.value = this.object.description ?? '';
-        this.descriptionInput.placeholder = 'NObject Description';
-
-        const bindingDescription = new DOMBinding(this.ytextDescription, this.descriptionInput);
 
         this.tagsInput = document.createElement('input');
         this.tagsInput.type = 'text';
@@ -49,17 +42,6 @@ export default class EditorMetadata {
             });
         });
 
-        this.descriptionInput.addEventListener('input', () => {
-            this.ydoc.transact(() => {
-                this.ytextDescription.delete(0, this.ytextDescription.length);
-                this.ytextDescription.insert(0, this.descriptionInput.value);
-                this.object.description = this.descriptionInput.value;
-            });
-            this.onSave?.(this.object);
-            DB.updateObject(this.object).then(() => {
-                this.onSave?.(this.object);
-            });
-        });
 
         this.tagsInput.addEventListener('input', () => {
             this.ydoc.transact(() => {
@@ -74,7 +56,6 @@ export default class EditorMetadata {
         });
 
         this.el.appendChild(this.nameInput);
-        this.el.appendChild(this.descriptionInput);
         this.el.appendChild(this.tagsInput);
     }
 }

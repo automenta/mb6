@@ -3,13 +3,16 @@ import { configDefaults } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    environment: 'happy-dom', // or 'jsdom', 'node'
-    //exclude: [...configDefaults.exclude, fileURLToPath(new URL('./src/server/*', import.meta.url))],
+    environment: 'jsdom',
+    exclude: [...configDefaults.exclude],
     browser: {
       enabled: true,
       headless: true,
-      provider: 'webdriverio',
-      logHeapUsage: true,
+      provider: 'puppeteer',
+      launchOptions: {
+        args: ['--no-sandbox']
+      }
     },
-  },
+    setupFiles: ['./tests/setup.js']
+  }
 })
