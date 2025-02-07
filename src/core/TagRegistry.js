@@ -27,6 +27,17 @@ export default class TagRegistry {
     static getSchema(tagName) {
         return this.schemas.get(tagName);
     }
+    static suggestTags(content) {
+        const keywords = content.toLowerCase().split(/\s+/);
+        const suggestedTags = [];
+        for (const [tagName, schema] of TagRegistry.schemas) {
+            if (keywords.some(keyword => tagName.toLowerCase().includes(keyword))) {
+                suggestedTags.push(tagName);
+            }
+        }
+        return suggestedTags;
+    }
+
 
     /**
      * Gets the hypersliced relationships for a given array of tags.
@@ -75,6 +86,17 @@ export default class TagRegistry {
             let score = 0;
             // TODO: Implement actual hypersliced interface matching
             return Math.min(1, score);
+        };
+    }
+     static createInterfaceMatcher(interfaceDef) {
+        return (source, candidate) => {
+            let score = 0;
+            for (const {name, type} of interfaceDef) {
+                if (candidate.definiteTags[name] !== undefined && typeof candidate.definiteTags[name] === type) {
+                    score++;
+                }
+            }
+            return Math.min(1, score / interfaceDef.length);
         };
     }
 

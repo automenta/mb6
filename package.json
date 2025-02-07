@@ -8,10 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node src/server/Server.js",
-    "test": "vitest",
-    "test:core": "vitest run --dir src/core",
-    "test:server": "vitest run --dir src/server",
-    "test:ui": "vitest run --dir src/ui --environment jsdom"
+    "test": "vitest --watch=false",
+    "test:core": "vitest run --dir src/core --watch=false",
+    "test:server": "vitest run --dir src/server --watch=false",
+    "test:ui": "vitest --config vitest.config.ui.js --watch=false"
   },
   "dependencies": {
     "@chainsafe/libp2p-yamux": "latest",
@@ -21,6 +21,7 @@
     "@libp2p/tcp": "latest",
     "@libp2p/webrtc-star": "latest",
     "@libp2p/websockets": "latest",
+    "@testing-library/react": "^16.2.0",
     "bittorrent-dht": "latest",
     "express": "latest",
     "level": "latest",
@@ -39,9 +40,11 @@
   },
   "devDependencies": {
     "@types/express": "latest",
+    "fake-indexeddb": "^6.0.0",
+    "happy-dom": "latest",
     "jsdom": "latest",
     "typescript": "latest",
     "vite": "latest",
-    "vitest": "latest"
+    "vitest": "^0.12.0"
   }
 }

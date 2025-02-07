@@ -1,4 +1,6 @@
 import {WebrtcProvider} from 'y-webrtc';
+import * as Y from 'yjs';
+
 import * as Yjs from 'yjs';
 import DB from '../core/DB.js';
 import EditorContent from './Editor.Content.js';
@@ -10,15 +12,15 @@ import MetadataManager from './MetadataManager.js';
 let webrtcProviderInstance = null;
 
 export default class Editor {
-    constructor({object, pluginManager, emitter}) {
+    constructor({object, emitter}) {
         this.object = object;
-        this.pluginManager = pluginManager;
         this.emitter = emitter;
+
 
         this.el = this._createElement(object);
 
         this.toolbar = new EditorToolbar({});
-        this.metadata = new MetadataManager(false); // Placeholder for isReadOnly
+        this.metadata = new MetadataManager(false);
         this.tagSelector = new TagSelector(this.el, '');
 
         // Initialize Yjs doc
@@ -70,6 +72,8 @@ export default class Editor {
         const CHANGED = () => this.saveCurrentObject();
         this.metadata.nameInput.addEventListener('input', CHANGED);
         this.editorContent.contentEditor.addEventListener('input', CHANGED);
+        this.editorContent.contentEditor.addEventListener('input', this.updateSuggestedTags);
+
     }
 
 
@@ -82,10 +86,37 @@ export default class Editor {
 
 
     saveCurrentObject = () => {
-        this.object.name = this.metadata.nameInput.value;
-        this.object.content = this.editorContent.contentEditor.innerHTML;
-        this.object.tags = this.tagSelector.getTags();
+        const name = this.metadata.nameInput.value;
+        const content = this.editorContent.contentEditor.innerHTML;
+        const tags = this.tagSelector.getTags();
+        const updated = Date.now();
+
+        // Update Yjs document
+        this.ydoc.transact(() => {
+            this.object.name = name;
+            this.object.content = content;
+            this.object.tags = tags;
+            this.object.updated = updated;
+        });
         DB.updateObject(this.object);
+    };
+
+    updateSuggestedTags = () => {
+        const content = this.editorContent.contentEditor.innerHTML;
+        const suggestedTags = TagRegistry.suggestTags(content);
+        this.tagSelector.setSuggestedTags(suggestedTags);
+    };
+
+    componentDidUpdate() {
+        this.updateSuggestedTags();
+    }
+
+    componentWillUnmount() {
+        // Cleanup logic if needed
+    }
+
+    componentDidMount() {
+        this.updateSuggestedTags();
     }
 
     onUpdate(callback) {

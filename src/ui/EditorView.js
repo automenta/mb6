@@ -18,7 +18,9 @@ export default class EditorView {
      */
     render(obj) {
         if (this.editor) {
-            //TODO deconstruct existing editor if different obj?
+            if (this.editor && this.editor.object.id !== obj.id) {
+    this.editor = null;
+}
         }
 
         this.el.innerHTML = ''; // Clear the container

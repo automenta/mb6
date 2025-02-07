@@ -8,8 +8,9 @@ export default class Sidebar {
         this.onNavigate = onNavigate;
         this.uiManager = uiManager;
         this.objects = objects;
+        this.emitter = emitter;
         this.menu = new Menu({onNavigate: this.onNavigate, objects: this.objects, uiManager: this.uiManager});
-        this.nObjectList = new NObjectList(this.objects, emitter);
+        this.nObjectList = new NObjectList(this.objects, this.emitter);
         this.statusView = new StatusView(notifier);
         const el = document.createElement('div');
         el.id = 'sidebar';

@@ -19,7 +19,8 @@ const dht = new DHT({
 });
 
 class Net {
-    constructor(doc) {
+    constructor(ydoc) {
+        this.ydoc = ydoc;
         this.initP2PNetwork();
         this.initSupernodeConnection();
         this.setupPluginSystem();
@@ -192,8 +193,21 @@ class Net {
 
         // Handle incoming NObjects
         this.handleIncomingNObject = (nobject) => {
-            // TODO: Implement NObject processing and synchronization
-            console.log('Received NObject:', nobject);
+            this.ydoc.transact(() => {
+                // Implement NObject processing and synchronization
+                console.log('Received NObject:', nobject);
+                const ytextName = this.ydoc.getText('name');
+                ytextName.delete(0, ytextName.length);
+                ytextName.insert(0, nobject.name || '');
+
+                const ytextDescription = this.ydoc.getText('description');
+                ytextDescription.delete(0, ytextDescription.length);
+                ytextDescription.insert(0, nobject.description || '');
+
+                const ytextTags = this.ydoc.getText('tags');
+                ytextTags.delete(0, ytextTags.length);
+                ytextTags.insert(0, nobject.tags || '');
+            });
         };
 
         // TODO: Implement WebRTC signaling and connection establishment for P2P.
@@ -263,4 +277,4 @@ class Net {
     }
 }
 
-export default new Net();
+export default Net;

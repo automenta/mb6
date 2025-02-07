@@ -41,7 +41,11 @@ export default class EditorMetadata {
         const bindingTags = new DOMBinding(this.ytextTags, this.tagsInput);
 
         this.nameInput.addEventListener('input', () => {
-            this.object.name = this.nameInput.value;
+            this.ydoc.transact(() => {
+                this.ytextName.delete(0, this.ytextName.length);
+                this.ytextName.insert(0, this.nameInput.value);
+                this.object.name = this.nameInput.value;
+            });
             this.onSave?.(this.object);
             DB.updateObject(this.object).then(() => {
                 this.onSave?.(this.object);
@@ -49,7 +53,11 @@ export default class EditorMetadata {
         });
 
         this.descriptionInput.addEventListener('input', () => {
-            this.object.description = this.descriptionInput.value;
+            this.ydoc.transact(() => {
+                this.ytextDescription.delete(0, this.ytextDescription.length);
+                this.ytextDescription.insert(0, this.descriptionInput.value);
+                this.object.description = this.descriptionInput.value;
+            });
             this.onSave?.(this.object);
             DB.updateObject(this.object).then(() => {
                 this.onSave?.(this.object);
@@ -57,7 +65,11 @@ export default class EditorMetadata {
         });
 
         this.tagsInput.addEventListener('input', () => {
-            this.object.tags = this.tagsInput.value;
+            this.ydoc.transact(() => {
+                this.ytextTags.delete(0, this.ytextTags.length);
+                this.ytextTags.insert(0, this.tagsInput.value);
+                this.object.tags = this.tagsInput.value;
+            });
             this.onSave?.(this.object);
             DB.updateObject(this.object).then(() => {
                 this.onSave?.(this.object);

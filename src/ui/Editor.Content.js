@@ -1,5 +1,5 @@
 import DB from '../core/DB.js';
-import {debounce} from './UIUtil.js';
+import {debounce, } from './UIUtil.js';
 
 /**
  * Editor for the content of an NObject.
@@ -17,7 +17,6 @@ export default class EditorContent {
         this.contentEditor.contentEditable = 'true';
         this.contentEditor.innerHTML = this.object?.content ?? '';
 
-        //this.ytext.bind(this.contentEditor);
 
         const updateContent = async () => {
             this.object.content = this.ytext.toString();
@@ -29,7 +28,9 @@ export default class EditorContent {
         const debouncedUpdateContent = debounce(updateContent, 300);
 
         this.contentEditor.addEventListener('input', debouncedUpdateContent);
-        this.ytext.observe(debouncedUpdateContent);
+        this.ytext.observe(() => {
+            this.contentEditor.innerHTML = this.ytext.toString();
+        });
     }
 
 }

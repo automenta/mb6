@@ -3,7 +3,6 @@ class MetadataManager {
         this.isReadOnly = isReadOnly;
     }
 
-
     createMetadataPanel(object) {
         const metadataPanel = document.createElement('div');
         metadataPanel.classList.add('metadata-panel');
@@ -17,26 +16,36 @@ class MetadataManager {
 
         this.nameInput = nameInput;
 
+        // Add additional metadata fields based on the object's properties
+        const properties = Object.keys(object).filter(key => key !== 'name');
+        properties.forEach(property => {
+            const propertyInput = document.createElement('input');
+            propertyInput.type = 'text';
+            propertyInput.value = object[property];
+            propertyInput.placeholder = property;
+            propertyInput.readOnly = this.isReadOnly;
+            metadataPanel.appendChild(propertyInput);
+        });
 
-        // Add metadata content based on the object here
         return metadataPanel;
     }
 
-    // Placeholder methods
     renderMetadataPanel(object) {
-        return []; // Return an empty array for now
+        // Implementation to be added later
+        return [];
     }
 
     clearMetadataPanel() {
-        // Implementation to be added later
+        // Clear all metadata inputs
+        Array.from(metadataPanel.querySelectorAll('input')).forEach(input => input.value = '');
     }
-
 
     updatePrivacyIndicator(isPublic) {
-        // Implementation to be added later
+        // Update the privacy indicator based on isPublic status
+        const privacyIndicator = document.createElement('span');
+        privacyIndicator.textContent = isPublic ? 'Public' : 'Private';
+        metadataPanel.appendChild(privacyIndicator);
     }
-
 }
-
 
 export default MetadataManager;

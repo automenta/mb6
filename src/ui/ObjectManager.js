@@ -25,13 +25,12 @@ export default class ObjectManager {
 
     loadObjects = async () => {
         (await DB.getObjects()).forEach(obj => this.objects.set(obj.id, obj));
-        this.renderObjects();
-
+        this.emitter.emit('objectsLoaded', this.objects);
     };
 
     deleteObject = obj => {
         this.objects.delete(obj.id);
-        this.renderObjects();
+        this.emitter.emit('objectDeleted', obj);
 
     };
 
@@ -39,7 +38,7 @@ export default class ObjectManager {
         const newNObject = create(this.objects, this.pluginManager, name, content, tags);
         this.objects.set(newNObject.id, newNObject);
         addObjectToIndex(newNObject.id);
-        this.renderObjects();
+        this.emitter.emit('objectCreated', newNObject);
         return newNObject;
     };
 
@@ -52,14 +51,13 @@ export default class ObjectManager {
         Object.assign(existingNObject, updates);
         await DB.updateObject(existingNObject);
         this.emitter.emit('objectUpdated');
-        this.renderObjects();
         return existingNObject;
     };
 
     deleteNObject = async id => {
         await DB.deleteObjectFromIndex(id);
         this.objects.delete(id);
-        this.renderObjects();
+        this.emitter.emit('objectDeleted', id);
 
     };
 

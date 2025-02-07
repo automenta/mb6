@@ -15,6 +15,7 @@ export default class ListView {
     createListItem = obj => {
         const item = document.createElement('li');
         item.textContent = obj.name;
+              item.dataset.id = obj.id;
 
         const editButton = item.appendChild(document.createElement('button'));
         editButton.textContent = 'Edit';
@@ -32,6 +33,8 @@ export default class ListView {
      * @param {object} obj - The object to edit.
      */
     handleEditClick(obj) {
+         // Navigate to the editor view for the selected object
+        window.location.hash = `#editor/${obj.id}`;
         // TODO: Implement edit functionality
     }
 
@@ -40,8 +43,7 @@ export default class ListView {
      * @param {object} obj - The object to delete.
      */
     handleDeleteClick(obj) {
-        this.objects.delete(obj.id);
-        this.render();
+        DB.deleteObject(obj);
     }
 
     /**
@@ -50,5 +52,23 @@ export default class ListView {
     render = () => {
         this.el.innerHTML = '';
         Array.from(this.objects.values()).map(this.createListItem).forEach(item => this.el.appendChild(item));
+    addObject = (obj) => {
+        const item = this.createListItem(obj);
+        this.el.appendChild(item);
+    };
+
+    updateObject = (obj) => {
+        const item = this.el.querySelector(`[data-id='${obj.id}']`);
+        if (item) {
+            item.textContent = obj.name; // Update the text content
+        }
+    };
+
+    deleteObject = (id) => {
+        const item = this.el.querySelector(`[data-id='${id}']`);
+        if (item) {
+            item.remove();
+        }
+    };
     };
 }

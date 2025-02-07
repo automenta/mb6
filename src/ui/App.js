@@ -1,58 +1,21 @@
-import './css/styles-theme2.css'
-import {MainView} from './MainView.js'
-import {HomeView} from './HomeView.js'
-import MeView from './MeView.js';
-import FriendsView from './FriendsView.js';
-import NetworkView from './NetworkView.js'
-import NObjectsView from './NObjectsView.js'
-import EditorView from './EditorView.js'
-import DatabaseView from './DatabaseView.js'
-import Sidebar from './Sidebar.js'
-import NavigationManager from './NavigationManager.js'
-import ObjectManager from './ObjectManager.js'
-import NotificationManager from './NotificationManager.js'
 import {UIPlugins} from './UIPlugins.js'
 import Notifier from './Notifier.js'
 import {EventEmitter} from 'events'
-import SettingsView from './SettingsView.js';
+import LayoutManager from './LayoutManager.js'
+import ObjectManager from './ObjectManager.js'
+import NavigationManager from './NavigationManager.js'
 
 export class App {
-    constructor() {
-        this.pluginManager = new UIPlugins();
-        this.notifier = new Notifier();
-        this.emitter = new EventEmitter();
+    constructor({ emitter, pluginManager, notifier } = {}) {
+        this.emitter = emitter || new EventEmitter();
+        this.managers = {};
+        this.pluginManager = pluginManager || new UIPlugins();
+        this.notifier = notifier || new Notifier();
+        this.navigationManager = new NavigationManager();
+        this.managers.navigationManager = this.navigationManager;
         this.objects = new Map();
-
-        this.mainView = new MainView();
-        this.views = {
-            home: new HomeView(this.objects, this.pluginManager, []),
-            me: new MeView(),
-            friends: new FriendsView(),
-            network: new NetworkView(),
-            nObjects: new NObjectsView(this.objects, this.pluginManager),
-            database: new DatabaseView(this.objects, this.pluginManager),
-            editor: new EditorView(this.objects, this.pluginManager, this.emitter),
-            settings: new SettingsView({applyStylesheet: filename => this.applyStylesheet(filename)})
-        };
-
-        this.nObjectsView = this.views.nObjects;
-        this.objectManager = new ObjectManager(this.objects, this.pluginManager, this.nObjectsView, this.emitter);
-        this.notificationManager = new NotificationManager([], this.mainView, this.notifier);
-        this.navigationManager = new NavigationManager(this, this.views);
-
-        this.sidebar = new Sidebar({
-            onNavigate: route => this.navigationManager.handleNavigation(route),
-            objects: this.objects,
-            views: this.views,
-            notifier: this.notifier,
-            uiManager: this,
-            emitter: this.emitter
-        });
-
-        document.body.append(this.sidebar.el, this.mainView.el);
-
-        window.addEventListener('hashchange', () => this.navigationManager.handleNavigation(location.hash));
-        this.navigationManager.handleNavigation(location.hash);
+        this.objectManager = new ObjectManager(this.objects, this.pluginManager, null, this.emitter);
+        this.layoutManager = new LayoutManager({...this, objects: this.objects});
     }
 
     applyStylesheet(filename) {
@@ -65,7 +28,7 @@ export class App {
 
     createNObject(name, content, properties, tags) {
         const newNObject = this.objectManager.createNObject(name, content, properties, tags);
-        this.setContentView('nObjects', newNObject); // Or whichever view should display the new object
+        this.setContentView('nObjects', newNObject); // Updates the NObjects view after creating a new object
         return newNObject;
     }
 
@@ -75,22 +38,25 @@ export class App {
 
     updateNObject(id, updates) {
         const updatedNObject = this.objectManager.updateNObject(id, updates);
-        this.setContentView('nObjects', updatedNObject); // Or whichever view should display the updated object
+        this.setContentView('nObjects', updatedNObject); // Updates the NObjects view after updating an object
         return updatedNObject;
     }
 
     deleteNObject(id) {
         this.objectManager.deleteNObject(id);
-        this.setContentView('nObjects'); // Or whichever view should display the updated list of objects
+        this.setContentView('nObjects'); // Updates the NObjects view after deleting an object
     }
 
-    setContentView(viewName, obj) {
-        const view = this.views[viewName];
-        if (!view) {
-            throw new Error(`Unknown view: ${viewName}`);
+    render() {
+        const appElement = document.getElementById('app');
+        if (appElement) {
+            appElement.appendChild(this.layoutManager.mainView.el);
+        } else {
+            console.error('App element not found');
         }
-        this.mainView.setContentView(view, obj);
     }
+
 }
 
-new App();
+const app = new App();
+app.render();

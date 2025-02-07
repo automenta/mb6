@@ -56,11 +56,9 @@ Organize, prioritize, and grow thoughts into actionable results with real-time c
     - Sortable/filterable data views ("Database")
 - **Sidebar**
     - Lists:
-        - My Recent Objects
-        - My Matches
+        - Recent Objects
+        - Matches
         - Friends
-        - Friend's Objects
-        - Incoming (public, from network)
         - etc...
 - **Theme select + Dark Mode**
     - CSS style switch, and optional dark mode

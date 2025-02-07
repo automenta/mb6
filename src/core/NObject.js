@@ -16,13 +16,19 @@ class NObject extends EventEmitter {
     content;
     tags;
     metadata;
+    author;
+    created;
+    updated;
 
-    constructor(id, name, content, tags) {
+    constructor(id, name, content, tags, author, created, updated) {
         super();
         this.id = id;
         this.name = name;
         this.content = typeof content === 'string' ? new Yjs.Text(content) : content;
         this.tags = tags instanceof Yjs.Map ? tags : new Yjs.Map(tags);
+        this.author = author;
+        this.created = created || Date.now();
+        this.updated = updated || Date.now();
 
         // Enable CRDT synchronization for tags
         this.tags.observeDeep(() => this._onChange());
@@ -164,11 +170,11 @@ class NObject extends EventEmitter {
         return finalScore;
     }
 
-    /*semanticVector() {
+    semanticVector() {
         return this.tagsList
             .map(tag => TagRegistry.getVectorEmbedding(tag))
             .reduce((acc, vec) => acc.add(vec), new Vector());
-    }*/
+    }
 
     /**
      * Validate tags against hypersliced schemas

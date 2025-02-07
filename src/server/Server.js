@@ -1,15 +1,16 @@
 // TODO: Implement routing architecture with pluggable prioritization and filter heuristics (README.md line 95)
 import express from 'express';
 // TODO: Implement connections to IPFS and BitTorrent (README.md line 92)
-import {createServer} from 'http';
+import { createServer } from 'http';
 // TODO: Implement WebSocket connection for UI client and additional functionality (README.md line 97)
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 // TODO: Implement plugins for input (screenshots, etc.) and analysis (OCR, etc.) (README.md line 98)
 import * as Yjs from 'yjs';
-import {LeveldbPersistence} from 'y-leveldb';
+import { LeveldbPersistence } from 'y-leveldb';
 import path from 'path';
-import {createLibp2pNode, hybridBootstrap} from './Net.LibP2P.js';
-import {ServerPlugins} from './ServerPlugins.js';
+import { createLibp2pNode, hybridBootstrap } from './Net.LibP2P.js';
+import Net from './Net.js';
+import { ServerPlugins } from './ServerPlugins.js';
 import Level from "level";
 import {createEd25519PeerId, createFromJSON} from "@libp2p/peer-id-factory";
 
@@ -72,14 +73,15 @@ const io = new Server(server, {cors: {origin: '*', methods: ['GET', 'POST']}});
 (async () => {
     const ydoc = new Y.Doc();
     const persistence = new LeveldbPersistence('./nobject-editor-leveldb');
-    console.log('Y.Doc bound to LevelDB persistence');
+    console.log('Y.Doc bound to LevelDB persistence', ydoc);
 
+    const net = new Net(ydoc);
     const peerId = await getOrCreatePeerId();
     const node = await createLibp2pNode(peerId, db);
     console.log(`libp2p node started with id: ${node.peerId.toString()}`);
 
     await hybridBootstrap(node, db, peerId)
-
+    
     node.addEventListener('peer:discovery', ({detail}) => {
         console.log('Discovered', detail.id?.toString());
         pluginManager.emit('onPeerDiscovery', detail.id);
@@ -106,7 +108,9 @@ const io = new Server(server, {cors: {origin: '*', methods: ['GET', 'POST']}});
             socket.broadcast.emit('update', update);
             pluginManager.emit('onAfterUpdate', update);
         });
-        ydoc.on('update', update => socket.emit('update', Array.from(update)));
+        ydoc.on('update', update => {
+            socket.emit('update', Array.from(update));
+        });
     });
 
     const port = process.env.NODE_ENV === 'production'
