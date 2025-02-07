@@ -1,7 +1,4 @@
-import {WebrtcProvider} from 'y-webrtc';
 import * as Y from 'yjs';
-
-import * as Yjs from 'yjs';
 import DB from '../core/DB.js';
 import EditorContent from './Editor.Content.js';
 import EditorToolbar from './Editor.Toolbar.js';
@@ -9,13 +6,11 @@ import AwarenessManager from './AwarenessManager.js';
 import TagSelector from './TagSelector.js';
 import MetadataManager from './MetadataManager.js';
 
-let webrtcProviderInstance = null;
-
 export default class Editor {
-    constructor({object, emitter}) {
+    constructor({ object, emitter, app }) {
         this.object = object;
         this.emitter = emitter;
-
+        this.app = app;
 
         this.el = this._createElement(object);
 
@@ -23,34 +18,12 @@ export default class Editor {
         this.metadata = new MetadataManager(false);
         this.tagSelector = new TagSelector(this.el, '');
 
-        // Initialize Yjs doc
         this.ydoc = new Y.Doc();
         this.ytext = this.ydoc.getText('content') || new Y.Text(object.content);
 
         this.editorContent = new EditorContent(this.ytext, this.object, null, this.pluginManager, this.emitter);
 
-        // Initialize WebrtcProvider as a singleton
-        if (!webrtcProviderInstance) {
-            webrtcProviderInstance = new WebrtcProvider(
-                'nobject-editor-room', // room name
-                this.ydoc,
-                {
-                    signaling: [
-                        //'wss://signaling.yjs.dev',
-                        //'ws://localhost:4444'
-                    ]
-                }
-            );
-        }
-        this.webrtcProvider = webrtcProviderInstance;
-
-        this.webrtcProvider.on('synced', () => {
-            console.log('WebRTCProvider synced');
-        });
-
-        this.webrtcProvider.on('peers', peers => {
-            console.log('Current peers:', peers);
-        });
+        this.webrtcProvider = this.app.webrtc;
 
         this.awarenessManager = new AwarenessManager(
             this.webrtcProvider.awareness, this.editorContent.contentEditor);
@@ -58,8 +31,7 @@ export default class Editor {
         this.savedIndicator = document.createElement('span');
         this.savedIndicator.textContent = 'Saved';
         this.savedIndicator.className = 'saved-indicator';
-        this.savedIndicator.textContent = 'Saved'; // Set initial state to 'Saved'
-
+        this.savedIndicator.textContent = 'Saved';
         const header = document.createElement('div');
         header.classList.add('editor-header');
         header.appendChild(this.metadata.createMetadataPanel(this.object));
@@ -72,8 +44,7 @@ export default class Editor {
         const CHANGED = () => this.saveCurrentObject();
         this.metadata.nameInput.addEventListener('input', CHANGED);
         this.editorContent.contentEditor.addEventListener('input', CHANGED);
-        this.editorContent.contentEditor.addEventListener('input', this.updateSuggestedTags);
-
+        
     }
 
 
@@ -91,7 +62,6 @@ export default class Editor {
         const tags = this.tagSelector.getTags();
         const updated = Date.now();
 
-        // Update Yjs document
         this.ydoc.transact(() => {
             this.object.name = name;
             this.object.content = content;
@@ -108,20 +78,17 @@ export default class Editor {
     };
 
     componentDidUpdate() {
-        this.updateSuggestedTags();
     }
 
     componentWillUnmount() {
-        // Cleanup logic if needed
     }
 
     componentDidMount() {
-        this.updateSuggestedTags();
+        this.ytext.observe(() => {
+            this.editorContent.contentEditor.innerHTML = this.ytext.toString();
+        });        
     }
 
-    onUpdate(callback) {
-        this.ytext.observe(callback);
-    }
 
     formatText(format, value) {
         document.execCommand(format, false, value);
@@ -131,22 +98,16 @@ export default class Editor {
         switch (format) {
             case 'heading':
                 document.execCommand('formatBlock', false, '<h1>');
-                break;
             case 'pre':
                 document.execCommand('formatBlock', false, '<pre>');
-                break;
             case 'ordered-list':
                 document.execCommand('insertOrderedList', false);
-                break;
             case 'bulleted-list':
                 document.execCommand('insertUnorderedList', false);
-                break;
             case 'blockquote':
                 document.execCommand('formatBlock', false, '<blockquote>');
-                break;
             default:
                 document.execCommand('formatBlock', false, format);
-                break;
 
         }
     }
@@ -159,3 +120,4 @@ export default class Editor {
         document.execCommand(command, false, value);
     }
 }
+

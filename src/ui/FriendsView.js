@@ -1,7 +1,8 @@
-/** View for displaying the "Friends" page. */
-export default class FriendsView {
+import View from './View.js';
+
+export default class FriendsView extends View {
     constructor() {
-        this.el = document.createElement('div');
+        super();
         this.el.id = 'friends-view';
         this.el.textContent = 'Friends View (Placeholder)';
     }

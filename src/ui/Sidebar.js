@@ -4,12 +4,12 @@ import NObjectList from './NObjectList.js';
 import NObjectThumbnail from './NObjectThumbnail.js';
 
 export default class Sidebar {
-    constructor({onNavigate, objects, notifier, uiManager, emitter}) {
+    constructor({ onNavigate, objects, notifier, uiManager, emitter }) {
         this.onNavigate = onNavigate;
         this.uiManager = uiManager;
         this.objects = objects;
         this.emitter = emitter;
-        this.menu = new Menu({onNavigate: this.onNavigate, objects: this.objects, uiManager: this.uiManager});
+        this.menu = new Menu({ onNavigate: this.onNavigate, objects: this.objects, uiManager: this.uiManager });
         this.nObjectList = new NObjectList(this.objects, this.emitter);
         this.statusView = new StatusView(notifier);
         const el = document.createElement('div');

@@ -15,10 +15,10 @@ export default class NotificationView {
         const item = document.createElement('div');
         item.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
         item.innerHTML = `
-      <h4>New match for ${notification.candidate.name}</h4>
-      <p>Score: ${Math.round(notification.score * 100)}%</p>
-      <button data-id="${notification.id}">Mark read</button>
-    `;
+            <h4>New match for ${notification.candidate.name}</h4>
+            <p>Score: ${Math.round(notification.score * 100)}%</p>
+            <button data-id="${notification.id}">Mark read</button>
+        `;
         this.element.prepend(item);
     }
 

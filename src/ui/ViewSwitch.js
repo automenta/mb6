@@ -1,5 +1,5 @@
 export default class ViewSwitch {
-    constructor({onNavigate}) {
+    constructor({ onNavigate }) {
         this.onNavigate = onNavigate;
         const el = document.createElement('div');
         el.id = 'view-switch';
@@ -12,7 +12,7 @@ export default class ViewSwitch {
                 <li><a href="#database" data-navigo>Database</a></li>
             </ul>
         `;
-        el.addEventListener('click', ({target}) => {
+        el.addEventListener('click', ({ target }) => {
             if (target.dataset.navigo) {
                 this.onNavigate(target.getAttribute('href'));
             }

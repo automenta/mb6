@@ -37,4 +37,4 @@ export default class Notifier {
     };
 }
 
-export {Notifier};
+export { Notifier };

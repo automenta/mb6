@@ -1,8 +1,5 @@
-/**
- * Editor toolbar component.
- */
 export default class EditorToolbar {
-    constructor({onInsertSemantic}) {
+    constructor({ onInsertSemantic }) {
         this.onInsertSemantic = onInsertSemantic;
 
         this.el = document.createElement('div');
@@ -10,17 +7,10 @@ export default class EditorToolbar {
         this.buildToolbar();
     }
 
-    /**
-     * Returns the toolbar element.
-     * @returns {HTMLElement} The toolbar element.
-     */
     get element() {
         return this.el;
     }
 
-    /**
-     * Builds the toolbar.
-     */
     buildToolbar() {
         const createButton = (text, command) => {
             const button = document.createElement('button');
@@ -33,7 +23,6 @@ export default class EditorToolbar {
         const boldButton = createButton('<b>B</b>', 'bold');
         const italicButton = createButton('<i>I</i>', 'italic');
         const underlineButton = createButton('<u>U</u>', 'underline');
-
 
         const insertMenu = document.createElement('select');
         insertMenu.className = 'toolbar-select';

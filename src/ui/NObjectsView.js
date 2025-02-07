@@ -5,7 +5,7 @@ export default class NObjectsView {
     constructor(objects) {
         this.el = document.createElement('div');
         this.objects = objects;
-        this.listView = new ListView(this.objects); // Initialize ListView here
+        this.listView = new ListView(this.objects);
         DB.subscribe(this.handleDatabaseEvent);
     }
 

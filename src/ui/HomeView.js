@@ -1,20 +1,14 @@
+import View from './View.js';
 import NotificationView from './NotificationView.js';
 
-/**
- * View for displaying the home page.
- */
-export class HomeView {
+export class HomeView extends View {
     constructor(objects, pluginManager, notifications) {
-        this.el = document.createElement('div');
+        super();
         this.el.id = 'home';
         this.notifications = notifications;
-
         this.notificationView = new NotificationView();
     }
 
-    /**
-     * Renders the home view.
-     */
     render() {
         this.el.innerHTML = '';
         if (this.notifications && this.notifications.length > 0) {

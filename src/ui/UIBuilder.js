@@ -21,7 +21,7 @@ class UIBuilder {
         let schema;
         try {
             const fs = require('fs');
-            const schemaPath = `/home/me/mb6/tag/${tagName}.json`; // Construct path to schema file
+            const schemaPath = `/home/me/mb6/tag/${tagName}.json`;
             const schemaContent = fs.readFileSync(schemaPath, 'utf8');
             schema = JSON.parse(schemaContent);
         } catch (error) {
@@ -36,13 +36,11 @@ class UIBuilder {
             formElement.classList.add('read-only');
         }
 
-        // Add a button to remove the tag element
         const removeButton = this.createElement('button', 'remove-tag-element');
         removeButton.textContent = 'x';
         removeButton.addEventListener('click', () => formElement.remove());
         formElement.append(removeButton);
 
-        // Add form fields based on schema properties
         if (schema.properties) {
             for (const propName in schema.properties) {
                 const property = schema.properties[propName];
@@ -66,7 +64,7 @@ class UIBuilder {
                         inputElement.type = 'checkbox';
                         break;
                     case 'array':
-                        if (property.items && property.items.type === 'string' && property.items.enum) { // Added check for property.items existence
+                        if (property.items && property.items.type === 'string' && property.items.enum) {
                             inputElement = this.createElement('select', null, `${propName}-field`);
                             property.items.enum.forEach((option) => {
                                 const optionElement = this.createElement('option');
@@ -121,9 +119,7 @@ class UIBuilder {
 
     createTagSelectorContainer() {
         const tagSelectorContainer = this.createElement('div', 'tag-selector-container');
-        const s = new TagSelector(tagSelectorContainer, 'page'); // Assuming TagSelector is defined elsewhere
-        //s.addTag('Common Tags', 'page'); // Add 'page' tag
-        //s.addTag('Common Tags', 'BlogPost'); // Add 'BlogPost' tag
+        const s = new TagSelector(tagSelectorContainer, 'page');
         return tagSelectorContainer;
     }
 }

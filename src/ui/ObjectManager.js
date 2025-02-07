@@ -1,6 +1,6 @@
-import DB, {addObjectToIndex} from '../core/DB.js';
+import DB, { addObjectToIndex } from '../core/DB.js';
 import * as Yjs from "yjs";
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 import NObject from "../core/NObject.js";
 
 function create(objects, name, content, tags = new Yjs.Map()) {
@@ -15,13 +15,11 @@ export default class ObjectManager {
     constructor(objects, emitter) {
         this.objects = objects;
         this.emitter = emitter;
-        const o = DB.getObjects();
-        o.then((x)=>{
+        DB.getObjects().then((x) => {
             x.forEach(obj => objects.set(obj.id, obj));
-            this.emitter.emit('objectsLoaded', objects);    
+            this.emitter.emit('objectsLoaded', objects);
         });
     }
-
 
 
     deleteObject = obj => {

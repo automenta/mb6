@@ -1,13 +1,10 @@
-/**
- * View for displaying the menu.
- */
 export default class Menu {
-    constructor({onNavigate, uiManager}) {
+    constructor({ onNavigate, uiManager }) {
         this.onNavigate = onNavigate;
         this.uiManager = uiManager;
         this.el = document.createElement('div');
         this.el.id = 'menu';
-        this.el.className = 'menu'; // Add menu class
+        this.el.className = 'menu';
         this.el.innerHTML = `
             <button id="create-nobject" class="menu-button">+</button>
             <ul>
@@ -20,12 +17,15 @@ export default class Menu {
             </ul>
         `;
 
-        this.el.addEventListener('click', ({target}) => {
+        this.el.addEventListener('click', ({ target }) => {
             if (target.dataset.navigo) {
-                this.onNavigate(target.getAttribute('href'));
+                window.location.hash = target.getAttribute('href');
+                this.onNavigate(window.location.hash);
+
             } else if (target.id === 'create-nobject') {
                 const newNObject = this.uiManager.createNObject('Untitled', '', {}, []);
-                this.onNavigate(`#editor/${newNObject.id}`);
+                window.location.hash = `#editor/${newNObject.id}`;
+                this.onNavigate(window.location.hash);
             }
         });
     }

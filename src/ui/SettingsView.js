@@ -1,5 +1,5 @@
 export default class SettingsView {
-    constructor({applyStylesheet}) {
+    constructor({ applyStylesheet }) {
         this.applyStylesheet = applyStylesheet;
         const el = document.createElement('div');
         el.id = 'settings-view';

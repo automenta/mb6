@@ -26,7 +26,6 @@ class TagSelector {
     }
 
     suggestTags(content) {
-        // Implementation to suggest tags based on content
         return [];
     }
 }

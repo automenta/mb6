@@ -22,12 +22,9 @@ class AwarenessManager {
 
 
     setupAwareness() {
-        // Listen for local cursor changes
         this.editor.addEventListener('mouseup', () => this.updateLocalCursor());
         this.editor.addEventListener('keyup', () => this.updateLocalCursor());
 
-
-        // Listen for awareness updates
         this.awareness.on('change', () => this.renderRemoteCursors());
     }
 
@@ -44,12 +41,10 @@ class AwarenessManager {
 
 
     renderCursor(cursorData, user) {
-        // Try to reuse existing cursor element
         const u = user?.getUser();
         let cursorEle = this.editor.querySelector(`.remote-cursor-${u?.userId}`);
 
         if (!cursorEle) {
-            // Create a new cursor element if it doesn't exist
             cursorEle = document.createElement('span');
             cursorEle.className = `remote-cursor remote-cursor-${u?.userId}`;
             cursorEle.style.position = 'absolute';
@@ -60,7 +55,6 @@ class AwarenessManager {
             this.editor.append(cursorEle);
         }
 
-        // Position the cursor in the editor
         const position = this.getPositionFromOffset(cursorData.anchor);
         cursorEle.style.left = `${position.left}px`;
         cursorEle.style.top = `${position.top}px`;
@@ -74,7 +68,7 @@ class AwarenessManager {
             range.setStart(this.editor.childNodes[0], offset);
         }
         const rect = range.getBoundingClientRect();
-        return {left: rect.left, top: rect.top};
+        return { left: rect.left, top: rect.top };
     }
 }
 

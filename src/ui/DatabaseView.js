@@ -1,6 +1,3 @@
-/**
- * View for displaying the contents of the database.
- */
 export default class DatabaseView {
     constructor(objects, pluginManager) {
         this.el = document.createElement('div');
@@ -8,9 +5,6 @@ export default class DatabaseView {
         this.pluginManager = pluginManager;
     }
 
-    /**
-     * Renders the database view.
-     */
     render() {
         this.el.innerHTML = '';
 

@@ -1,7 +1,8 @@
-/** View for displaying the "Network" page. */
-export default class NetworkView {
+import View from './View.js';
+
+export default class NetworkView extends View {
     constructor() {
-        this.el = document.createElement('div');
+        super();
         this.el.id = 'network-view';
         this.el.textContent = 'Network View (Placeholder)';
     }

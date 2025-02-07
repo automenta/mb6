@@ -1,7 +1,8 @@
-/** View for displaying the "Me" page. */
-export default class MeView {
+import View from './View.js';
+
+export default class MeView extends View {
     constructor(objects, pluginManager, emitter) {
-        this.el = document.createElement('div');
+        super();
         this.el.id = 'me-view';
         this.el.textContent = 'Me View (Placeholder)';
     }

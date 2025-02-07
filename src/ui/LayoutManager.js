@@ -1,4 +1,3 @@
-import { MainView } from './MainView.js';
 import Sidebar from './Sidebar.js';
 import { HomeView } from './HomeView.js';
 import MeView from './MeView.js';
@@ -8,7 +7,6 @@ import NObjectsView from './NObjectsView.js';
 import DatabaseView from './DatabaseView.js';
 import EditorView from './EditorView.js';
 import SettingsView from './SettingsView.js';
-import NotificationManager from './NotificationManager.js';
 
 import './css/styles-theme2.css';
 
@@ -18,15 +16,15 @@ export default class LayoutManager {
         this.objects = objects;
         this.notifier = app.notifier;
         this.emitter = app.emitter;
+        this.contentContainer = document.createElement('div');
+        this.contentContainer.id = 'content-container';
         this.views = {};
-        this.managers = app.managers;
-        this.mainView = new MainView();
         this.sidebar = new Sidebar({
             objects: this.objects,
             notifier: this.notifier,
             emitter: this.emitter,
             onNavigate: (route) => {
-                this.handleNavigation(route);
+                this.app.handleNavigation(route); // Call app.handleNavigation directly
             }
         });
     }
@@ -36,7 +34,7 @@ export default class LayoutManager {
         this.setupEventListeners();
         if (appElement) {
             appElement.appendChild(this.sidebar.el);
-            appElement.appendChild(this.mainView.el);
+            appElement.appendChild(this.contentContainer);
         } else {
             console.error('App element not found');
         }
@@ -45,25 +43,29 @@ export default class LayoutManager {
     initializeViews() {
         this.views = {
             home: new HomeView(this.app.objects, [], this.app.emitter),
-            me: new MeView(this.app.objects, [], this.app.emitter),
-            friends: new FriendsView(),
-            network: new NetworkView(),
+            me: new MeView('Welcome to the Me Page!'),
+            friends: new FriendsView('Welcome to the Friends Page!'),
+            network: new NetworkView('Welcome to the Network Page!'),
             nObjects: new NObjectsView(this.app.objects),
             database: new DatabaseView(this.app.objects, []),
-            editor: new EditorView({ object: this.app.objects, emitter: this.app.emitter }),
+            editor: new EditorView(this.app.objects, null, this.app.emitter, this.app),
             settings: new SettingsView({ applyStylesheet: filename => this.app.applyStylesheet(filename) })
         };
     }
 
     setupEventListeners() {
-        this.sidebar.el.addEventListener('click', (e) => {
-            if (e.target.dataset.navigate) {
-                this.handleNavigation(e.target.dataset.navigate);
-            }
-        });
+        // No need for handleNavigation here anymore
     }
 
-    handleNavigation(route) {
-        this.app.handleNavigation(route);
+
+    setContentView(viewName, obj) {
+        this.contentContainer.innerHTML = '';
+        const view = this.views[viewName];
+        if (view) {
+            view.render(obj);
+            this.contentContainer.appendChild(view.el);
+        } else {
+            console.error(`View ${viewName} not found`);
+        }
     }
 }

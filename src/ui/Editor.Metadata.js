@@ -1,15 +1,12 @@
-/**
- * Editor for the metadata of an NObject.
- */
 import * as Yjs from 'yjs';
-import {DOMBinding} from '@yjs/dom';
+import { DOMBinding } from '@yjs/dom';
 
 export default class EditorMetadata {
-    constructor({object, onSave}) {
+    constructor({ object, onSave }) {
         this.object = object;
         this.onSave = onSave;
 
-        this.ydoc = new Y.Doc();
+        this.ydoc = new Yjs.Doc();
         this.ytextName = this.ydoc.getText('name');
         this.ytextDescription = this.ydoc.getText('description');
         this.ytextTags = this.ydoc.getText('tags');
@@ -19,14 +16,14 @@ export default class EditorMetadata {
 
         this.nameInput = document.createElement('input');
         this.nameInput.type = 'text';
-        this.nameInput.className = 'name-input'; // Add class to name input
+        this.nameInput.className = 'name-input';
         this.nameInput.value = this.object.name ?? '';
         this.nameInput.placeholder = 'NObject Name';
 
         const bindingName = new DOMBinding(this.ytextName, this.nameInput);
 
         this.descriptionInput = document.createElement('textarea');
-        this.descriptionInput.className = 'description-input'; // Add class to description input
+        this.descriptionInput.className = 'description-input';
         this.descriptionInput.value = this.object.description ?? '';
         this.descriptionInput.placeholder = 'NObject Description';
 
@@ -34,7 +31,7 @@ export default class EditorMetadata {
 
         this.tagsInput = document.createElement('input');
         this.tagsInput.type = 'text';
-        this.tagsInput.className = 'tags-input'; // Add class to tags input
+        this.tagsInput.className = 'tags-input';
         this.tagsInput.value = this.object.tags ?? '';
         this.tagsInput.placeholder = 'NObject Tags';
 

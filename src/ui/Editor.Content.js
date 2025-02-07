@@ -1,9 +1,6 @@
 import DB from '../core/DB.js';
-import {debounce, } from './UIUtil.js';
+import { debounce } from './UIUtil.js';
 
-/**
- * Editor for the content of an NObject.
- */
 export default class EditorContent {
     constructor(ytext, object, onUpdate, pluginManager, emitter) {
         this.ytext = ytext;
@@ -16,7 +13,6 @@ export default class EditorContent {
         this.contentEditor.el = 'content-editor';
         this.contentEditor.contentEditable = 'true';
         this.contentEditor.innerHTML = this.object?.content ?? '';
-
 
         const updateContent = async () => {
             this.object.content = this.ytext.toString();

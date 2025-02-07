@@ -6,13 +6,13 @@ export default class NObjectList {
         this.el = document.createElement('div');
         this.el.classList.add('nobject-list');
         this.db = DB;
-        this.filter = () => true; // Default filter: include all
-        this.sort = (a, b) => 0;   // Default sort: no sorting
+        this.filter = () => true;
+        this.sort = (a, b) => 0;
         this.objects = objects;
         this.emitter = emitter;
-        this.customRenderer = null; // Add customRenderer property
+        this.customRenderer = null;
 
-        this.refresh(); // Initial rendering
+        this.refresh();
 
         this.emitter.on('objectUpdated', () => {
             this.refresh();
